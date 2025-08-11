@@ -54,6 +54,16 @@ The current parser assumes some things. If you need other specs, let me know in 
 - Trains only unload at one station
 - Trucks only unload at one station
 
-## License
+## Tools and Products Used
 
-MIT License - see LICENSE file for details.
+* [Microsoft Visual Studio Community](https://www.visualstudio.com)
+* [R3dByt3 SatisfactorySaveNet](https://github.com/R3dByt3/SatisfactorySaveNet)
+* [JakeBayer FuzzySharp](https://github.com/JakeBayer/FuzzySharp)
+* [Icons8](https://icons8.com/)
+* [NuGet](https://www.nuget.org/)
+* [GitHub](https://github.com/)
+
+
+## Versions & Release Notes
+
+version 1.0: First version (.NET 8)
