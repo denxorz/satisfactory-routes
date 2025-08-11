@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using FuzzySharp;
 using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
@@ -82,7 +83,7 @@ public static class StationExtensions
                     flows.Add(new(
                         cargoType,
                         splittedGroup[0].StartsWith("in", StringComparison.InvariantCultureIgnoreCase),
-                        float.TryParse(flowLowest, out float f) ? (int)Math.Ceiling(f) : null,
+                        float.TryParse(flowLowest, NumberStyles.Float, CultureInfo.InvariantCulture, out float f) ? (int)Math.Ceiling(f) : null,
                         !flowAsString.StartsWith('~')));
                 }
 
