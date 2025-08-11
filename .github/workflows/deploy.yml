@@ -1,0 +1,51 @@
+name: Build and Deploy to NuGet
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Get version from release
+        id: get_version
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION=${VERSION#v}
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "version=0.0.0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update project version
+        run: |
+          dotnet msbuild Denxorz.Satisfactory.Routes/Denxorz.Satisfactory.Routes.csproj /p:Version=${{ steps.get_version.outputs.version }}
+
+      - name: Restore dependencies
+        run: dotnet restore Denxorz.Satisfactory.Routes.sln
+
+      - name: Build
+        run: dotnet build Denxorz.Satisfactory.Routes.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Denxorz.Satisfactory.Routes.sln --configuration Release --no-build --verbosity normal
+
+      - name: Pack
+        run: dotnet pack Denxorz.Satisfactory.Routes/Denxorz.Satisfactory.Routes.csproj --configuration Release --no-build --output ./nupkgs
+
+      - name: Publish to NuGet
+        run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
