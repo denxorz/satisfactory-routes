@@ -83,7 +83,7 @@ public sealed class TrainStationTests
         CargoFlow station1Flow = northStations[0].CargoFlows[0];
         Assert.AreEqual("ModularFrameHeavy", station1Flow.Type);
         Assert.IsTrue(station1Flow.IsExact);
-        Assert.AreEqual(45, station1Flow.FlowPerMinute);
+        Assert.AreEqual(5, station1Flow.FlowPerMinute);
         Assert.IsTrue(station1Flow.IsUnload);
 
         CargoFlow station2Flow = northStations[1].CargoFlows[0];
@@ -95,7 +95,7 @@ public sealed class TrainStationTests
         CargoFlow station3Flow = northStations[2].CargoFlows[0];
         Assert.AreEqual("ModularFrameFused", station3Flow.Type);
         Assert.IsTrue(station3Flow.IsExact);
-        Assert.AreEqual(45, station3Flow.FlowPerMinute);
+        Assert.AreEqual(5, station3Flow.FlowPerMinute);
         Assert.IsFalse(station3Flow.IsUnload);
     }
 
