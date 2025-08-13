@@ -45,4 +45,37 @@ public sealed class TruckStationTests
         CollectionAssert.AreEqual(new List<string>() { "Coal" }, templeStations[0].CargoTypes);
         CollectionAssert.AreEqual(new List<string>() { "QuartzCrystal" }, StationTests.TruckStations.Single(s => s.ShortName == "BoosterChurch").CargoTypes);
     }
+
+    [TestMethod]
+    public void GetsCargoFlowFromName()
+    {
+        var utilStations = StationTests.TruckStations.Where(s => s.ShortName == "UtilTowers").ToList();
+
+        CargoFlow flow1 = utilStations[0].CargoFlows[0];
+        Assert.AreEqual("Coal", flow1.Type);
+        Assert.IsTrue(flow1.IsExact);
+        Assert.AreEqual(30, flow1.FlowPerMinute);
+        Assert.IsTrue(flow1.IsUnload);
+
+        // Incorrect naming
+        Assert.AreEqual(0, utilStations[1].CargoFlows.Count);
+    }
+
+    [TestMethod]
+    public void GetsCargoFlowFromNameNotExact()
+    {
+        CargoFlow flow = templeStations[0].CargoFlows[0];
+        Assert.AreEqual("Coal", flow.Type);
+        Assert.IsFalse(flow.IsExact);
+        Assert.AreEqual(1200, flow.FlowPerMinute);
+        Assert.IsFalse(flow.IsUnload);
+    }
+
+    [TestMethod]
+    public void GetsTransporters()
+    {
+        Assert.IsTrue(templeStations.All(s => s.Transporters.All(t => t.From == s.Id)));
+        Assert.AreEqual("2147329195", templeStations[0].Transporters[0].Id);
+        Assert.AreEqual("2147340529", templeStations[0].Transporters[0].To);
+    }
 }
