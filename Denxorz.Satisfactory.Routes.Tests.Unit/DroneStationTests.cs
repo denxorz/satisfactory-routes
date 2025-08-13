@@ -88,9 +88,9 @@ public sealed class DroneStationTests
     {
         Assert.IsTrue(egelStations.All(s => s.Transporters.All(t => t.From == s.Id)));
         Assert.AreEqual("2147378492", egelStations[0].Transporters[0].Id);
-        Assert.AreEqual("2147388490", egelStations[0].Transporters[0].To);
+        Assert.AreEqual("2147388493", egelStations[0].Transporters[0].To);
         CollectionAssert.AreEquivalent(Array.Empty<string>(), egelStations[1].Transporters);
         Assert.AreEqual("2147397902", egelStations[2].Transporters[0].Id);
-        Assert.AreEqual("2147135058", egelStations[2].Transporters[0].To);
+        Assert.AreEqual("2147135061", egelStations[2].Transporters[0].To);
     }
 }
