@@ -34,15 +34,15 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Denxorz.Satisfactory.Routes.sln
 
-      - name: Update project version
-        run: |
-          dotnet pack Denxorz.Satisfactory.Routes/Denxorz.Satisfactory.Routes.csproj --configuration Release --output ./nupkgs /p:Version=${{ steps.get_version.outputs.version }}
-
       - name: Build
         run: dotnet build Denxorz.Satisfactory.Routes.sln --configuration Release --no-restore
 
       - name: Test
         run: dotnet test Denxorz.Satisfactory.Routes.sln --configuration Release --no-build --verbosity normal
+
+      - name: Pack with version
+        run: |
+          dotnet pack Denxorz.Satisfactory.Routes/Denxorz.Satisfactory.Routes.csproj --configuration Release --no-build --output ./nupkgs /p:Version=${{ steps.get_version.outputs.version }}
 
       - name: Publish to NuGet
         run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
