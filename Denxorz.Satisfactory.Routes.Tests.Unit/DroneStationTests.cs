@@ -79,18 +79,33 @@ public sealed class DroneStationTests
     [TestMethod]
     public void GetsCargoFlowFromNameNotExact()
     {
-        CargoFlow stationUtil = StationTests.DroneStations.Where(s => s.ShortName == "UtilTowers").ToList()[1].CargoFlows[0];
+        var stationUtil = StationTests.DroneStations.Where(s => s.ShortName == "UtilTowers").ToList()[1].CargoFlows[0];
         Assert.IsFalse(stationUtil.IsExact);
     }
 
     [TestMethod]
     public void GetsTransporters()
     {
-        Assert.IsTrue(egelStations.All(s => s.Transporters.All(t => t.From == s.Id)));
+        Assert.IsTrue(egelStations.All(s => s.Transporters.All(t => t.To == s.Id)));
         Assert.AreEqual("2147378492", egelStations[0].Transporters[0].Id);
-        Assert.AreEqual("2147388493", egelStations[0].Transporters[0].To);
+        Assert.AreEqual("2147380390", egelStations[0].Transporters[0].To);
         CollectionAssert.AreEquivalent(Array.Empty<string>(), egelStations[1].Transporters);
         Assert.AreEqual("2147397902", egelStations[2].Transporters[0].Id);
-        Assert.AreEqual("2147135061", egelStations[2].Transporters[0].To);
+        Assert.AreEqual("2147398668", egelStations[2].Transporters[0].To);
+    }
+
+    [TestMethod]
+    public void GetsTransportersFromToDirection()
+    {
+        var templeStations = StationTests.DroneStations.Where(s => s.ShortName == "Temple").ToList();
+        var ficsStations = StationTests.DroneStations.Where(s => s.ShortName == "Fics").ToList();
+
+        // Egel --NucPasta--> Temple
+        Assert.AreEqual(egelStations[1].Id, templeStations[1].Transporters[0].From);
+        Assert.AreEqual(templeStations[1].Id, templeStations[1].Transporters[0].To);
+
+        // Temple --Singularity--> Fics
+        Assert.AreEqual(templeStations[0].Id, ficsStations[2].Transporters[0].From);
+        Assert.AreEqual(ficsStations[2].Id, ficsStations[2].Transporters[0].To);
     }
 }

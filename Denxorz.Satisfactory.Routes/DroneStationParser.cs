@@ -60,7 +60,7 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
                     cargoTypes,
                     cargo,
                     isUnload,
-                    pairedStationIdentifier is not null ? [new Transporter(drone.Split("_")[^1], shortId, pairedStationIdentifier.DroneStationId.Split("_")[^1])] : [],
+                    pairedStationIdentifier is not null ? [new Transporter(drone.Split("_")[^1], pairedStationIdentifier.DroneStationId.Split("_")[^1], shortId)] : [],
                     t.Position.X,
                     t.Position.Y
                 );
