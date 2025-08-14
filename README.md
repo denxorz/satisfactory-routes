@@ -1,5 +1,9 @@
 # Denxorz.Satisfactory.Routes
 
+[![Build Status](https://github.com/denxorz/satisfactory-routes/workflows/Build%20and%20Test/badge.svg)](https://github.com/denxorz/satisfactory-routes/actions/workflows/build-test.yml)
+[![NuGet](https://img.shields.io/nuget/v/Denxorz.Satisfactory.Routes.svg)](https://www.nuget.org/packages/Denxorz.Satisfactory.Routes)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A .NET library for parsing and analyzing Satisfactory save files to extract route and station information.
 
 ## Features
@@ -56,13 +60,12 @@ The current parser assumes some things. If you need other specs, let me know in 
 
 ## Tools and Products Used
 
-* [Microsoft Visual Studio Community](https://www.visualstudio.com)
-* [R3dByt3 SatisfactorySaveNet](https://github.com/R3dByt3/SatisfactorySaveNet)
-* [JakeBayer FuzzySharp](https://github.com/JakeBayer/FuzzySharp)
-* [Icons8](https://icons8.com/)
-* [NuGet](https://www.nuget.org/)
-* [GitHub](https://github.com/)
-
+- [Microsoft Visual Studio Community](https://www.visualstudio.com)
+- [R3dByt3 SatisfactorySaveNet](https://github.com/R3dByt3/SatisfactorySaveNet)
+- [JakeBayer FuzzySharp](https://github.com/JakeBayer/FuzzySharp)
+- [Icons8](https://icons8.com/)
+- [NuGet](https://www.nuget.org/)
+- [GitHub](https://github.com/)
 
 ## Versions & Release Notes
 
