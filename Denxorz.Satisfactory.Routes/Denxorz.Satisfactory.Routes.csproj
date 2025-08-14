@@ -12,6 +12,7 @@
     <Description>A library for parsing Satisfactory save files to extract route and station information.</Description>
     <PackageTags>satisfactory;game;save;parser;drone;routes</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icons8-station-48.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/denxorz/satisfactory-routes</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -28,6 +29,7 @@
 
   <ItemGroup>
     <None Include="../README.md" Pack="true" PackagePath="/" />
+    <None Include="../icons8-station-48.png" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>
