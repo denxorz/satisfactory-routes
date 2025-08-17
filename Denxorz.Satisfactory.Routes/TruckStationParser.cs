@@ -105,6 +105,7 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
                 var vehicles = t.IsUnload ? [] : vehiclesByTargetListId[targetListId]
                     .Select(v => new Transporter(
                         v.Vehicle.ObjectReference.PathName.Split("_")[^1],
+                        "??",
                         shortId,
                         unloadStationIdByTargetListId.TryGetValue(targetListId, out var tmp) ? tmp.Split("_")[^1] : "??"))
                     .ToList();

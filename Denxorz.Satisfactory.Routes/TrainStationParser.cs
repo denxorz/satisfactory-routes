@@ -1,4 +1,5 @@
-﻿using SatisfactorySaveNet.Abstracts.Model;
+﻿using System.Linq;
+using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 
 namespace Denxorz.Satisfactory.Routes;
@@ -22,9 +23,14 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .Select(t => new
             {
                 Id = t.ObjectReference.PathName,
-                StopStationIds = t.Properties.FirstOrDefault().ToStops()
+                StopStationIds = t.Properties.FirstOrDefault(p => p.Name == "mStops").ToStops()
             })
             .ToList();
+
+        var trainNameByTimeTableId = trainRelatedObjectsByType["/Game/FactoryGame/Buildable/Vehicle/Train/-Shared/BP_Train.BP_Train_C"]
+            .ToDictionary(
+                t => t.Properties.FirstOrDefault(p => p.Name == "TimeTable") is ObjectProperty op ? op.Value.PathName : "??", 
+                t => t.Properties.FirstOrDefault(p => p.Name == "mTrainName") is TextProperty tp ? tp.Value : null);
 
         // Train Station Identifier, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
         var trainStationIdentifiers = trainRelatedObjectsByType["/Script/FactoryGame.FGTrainStationIdentifier"];
@@ -88,6 +94,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                         .Where(ttt => ttt.StopStationIds.Contains(stationIdentifier.Id))
                         .Select(ttt => new Transporter(
                             ttt.Id.Split("_")[^1],
+                            trainNameByTimeTableId[ttt.Id] ?? "??",
                             idShort,
                             ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).FirstOrDefault(ssi => ssi != id)?.Split("_")[^1] ?? "??"))],
                     t.Position.X,
