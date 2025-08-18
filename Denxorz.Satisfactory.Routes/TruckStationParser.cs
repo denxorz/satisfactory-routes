@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Linq;
+using System.Text.Json;
 using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 
@@ -74,6 +75,11 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
             .GroupBy(t => t.StationId!)
             .ToDictionary(p => p.Key, p => p.First().ParentObjectName);
 
+        var stationIdsByTargetListId = targetListIdByStationId
+            .Select(t => new { TargetListId = t.Value, StationId = t.Key })
+            .GroupBy(t => t.TargetListId)
+            .ToDictionary(t => t.Key, t => t.Select(t => t.StationId).ToList());
+
         var unloadStationIdByTargetListId = targetListIdByStationId
             .Select(t => new { TargetListId = t.Value, StationId = t.Key, IsUnload = (simpleTruckStationsByStationId.TryGetValue(t.Key, out var tmp) ? tmp.IsUnload : (bool?)null) })
             .Where(t => t.IsUnload == true)
@@ -101,13 +107,17 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
                 var cargoTypes = inventory.ToCargoTypes();
                 var cargo = stationIdentifier.Name.GetFlowPerMinuteFromName(cargoTypes);
                 var targetListId = targetListIdByStationId[t.Id];
+                var unloadStationId = unloadStationIdByTargetListId.TryGetValue(targetListId, out var tmp) ? tmp : "??";
+                var otherStations = stationIdsByTargetListId[targetListId].Where(s => s != t.Id && s != unloadStationId).Select(s => s.Split("_")[^1]).ToList();
+                var otherStations2 = stationIdsByTargetListId[targetListId].ToList();
 
                 var vehicles = t.IsUnload ? [] : vehiclesByTargetListId[targetListId]
                     .Select(v => new Transporter(
                         v.Vehicle.ObjectReference.PathName.Split("_")[^1],
                         "Truck",
                         shortId,
-                        unloadStationIdByTargetListId.TryGetValue(targetListId, out var tmp) ? tmp.Split("_")[^1] : "??"))
+                        unloadStationId.Split("_")[^1],
+                        otherStations))
                     .ToList();
 
                 return new Station(

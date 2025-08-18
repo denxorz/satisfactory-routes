@@ -65,7 +65,8 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
                             drone.Split("_")[^1],
                             stationIdentifier.Name,
                             pairedStationIdentifier.DroneStationId.Split("_")[^1], 
-                            shortId)] : [],
+                            shortId,
+                            [])] : [],
                     t.Position.X,
                     t.Position.Y
                 );

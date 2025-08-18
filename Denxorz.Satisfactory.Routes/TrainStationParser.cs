@@ -96,7 +96,8 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                             ttt.Id.Split("_")[^1],
                             trainNameByTimeTableId[ttt.Id] ?? "??",
                             idShort,
-                            ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).FirstOrDefault(ssi => ssi != id)?.Split("_")[^1] ?? "??"))],
+                            ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).FirstOrDefault(ssi => ssi != id)?.Split("_")[^1] ?? "??", [])
+                        )],
                     t.Position.X,
                     t.Position.Y
                 );
