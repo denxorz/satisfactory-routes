@@ -57,18 +57,19 @@ public sealed class TrainStationTests
     [TestMethod]
     public void GetsTransporters()
     {
-        Assert.IsTrue(northStations.All(s => s.Transporters.All(t => t.From == s.Id)));
-
         Assert.AreEqual("2146789448", northStations[0].Transporters[0].Id);
-        Assert.AreEqual("2147007670", northStations[0].Transporters[0].To);
+        Assert.AreEqual("2145491643", northStations[0].Transporters[0].To);
+        Assert.AreEqual("2147007670", northStations[0].Transporters[0].From);
         Assert.AreEqual("[FusedF] HF", northStations[0].Transporters[0].Name);
 
         Assert.AreEqual("2145561005", northStations[1].Transporters[0].Id);
-        Assert.AreEqual("2147396352", northStations[1].Transporters[0].To);
+        Assert.AreEqual("2145489503", northStations[1].Transporters[0].To);
+        Assert.AreEqual("2147396352", northStations[1].Transporters[0].From);
         Assert.AreEqual("The North [AluCase]", northStations[1].Transporters[0].Name);
 
         Assert.AreEqual("2142856431", northStations[2].Transporters[0].Id);
         Assert.AreEqual("2146856079", northStations[2].Transporters[0].To);
+        Assert.AreEqual("2145477740", northStations[2].Transporters[0].From);
         Assert.AreEqual("Egel [FF]", northStations[2].Transporters[0].Name);
     }
 
@@ -85,6 +86,13 @@ public sealed class TrainStationTests
         Assert.AreEqual("2146472471", damStation[0].Transporters[1].Id);
         Assert.AreEqual("2146589300", damStation[0].Transporters[1].To);
         Assert.AreEqual("[BoosterChurch] AluSheet", damStation[0].Transporters[1].Name);
+    }
+
+    [TestMethod]
+    public void GetsTransportersOtherStations()
+    {
+        var nucStations = StationTests.TrainStations.Where(s => s.ShortName == "Nuc").ToList();
+        Assert.AreEqual("2147387640", nucStations[3].Transporters[0].OtherStops[0]);
     }
 
     [TestMethod]

@@ -81,6 +81,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                 var inventory = platforms.Count > 0 ? objectsByName[platforms[0]!.InventoryId] : null;
                 var cargoTypes = inventory.ToCargoTypes();
                 var cargo = stationIdentifier.Name.GetFlowPerMinuteFromName(cargoTypes);
+                var isUnload = platforms.Count > 0 && platforms[0]!.IsUnloadMode;
 
                 return new Station(
                    idShort,
@@ -89,15 +90,21 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                     "train",
                     cargoTypes,
                     cargo,
-                    platforms.Count > 0 && platforms[0]!.IsUnloadMode,
+                    isUnload,
                     [.. trainTimeTablesWithStops
                         .Where(ttt => ttt.StopStationIds.Contains(stationIdentifier.Id))
-                        .Select(ttt => new Transporter(
-                            ttt.Id.Split("_")[^1],
-                            trainNameByTimeTableId[ttt.Id] ?? "??",
-                            idShort,
-                            ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).FirstOrDefault(ssi => ssi != id)?.Split("_")[^1] ?? "??", [])
-                        )],
+                        .Select(ttt => {
+                            var all = ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).Where(ssi => ssi != id).Select(ssi => ssi.Split("_")[^1]).ToList();
+                            var from = isUnload ? all.First() : idShort;
+                            var to = isUnload ? idShort : all.First();
+                            var others = all.Skip(1).ToList();
+                            return new Transporter(
+                                ttt.Id.Split("_")[^1],
+                                trainNameByTimeTableId[ttt.Id] ?? "??",
+                                from,
+                                to,
+                                others); 
+                        })],
                     t.Position.X,
                     t.Position.Y
                 );
