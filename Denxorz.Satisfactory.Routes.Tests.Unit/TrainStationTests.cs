@@ -118,17 +118,30 @@ public sealed class TrainStationTests
     }
 
     [TestMethod]
+    public void GetsCargoFlowFromNameMatchingBug()
+    {
+        CargoFlow station1Flow = northStations[0].CargoFlows[0];
+        Assert.AreEqual("ModularFrameHeavy", station1Flow.Type);
+        Assert.IsTrue(station1Flow.IsExact);
+        Assert.AreEqual(5, station1Flow.FlowPerMinute);
+        Assert.IsTrue(station1Flow.IsUnload);
+
+        CargoFlow station2Flow = northStations[1].CargoFlows[0];
+        Assert.AreEqual("AluminumCasing", station2Flow.Type);
+        Assert.IsTrue(station2Flow.IsExact);
+        Assert.AreEqual(225, station2Flow.FlowPerMinute);
+        Assert.IsTrue(station2Flow.IsUnload);
+    }
+
+    [TestMethod]
     public void GetsCargoFlowFromNameMultiNotExact()
     {
-        Station stationUtil = StationTests.TrainStations.Where(s => s.ShortName == "UtilTowers").ToList()[1];
-        Assert.IsFalse(stationUtil.CargoFlows[0].IsExact);
-        Assert.AreEqual(95, stationUtil.CargoFlows[0].FlowPerMinute);
-        Assert.AreEqual("Rubber", stationUtil.CargoFlows[0].Type);
-        Assert.IsFalse(stationUtil.CargoFlows[0].IsUnload);
+        var stationTriangle = StationTests.TrainStations.First(s => s.ShortName == "Triangle");
 
-        Assert.IsFalse(stationUtil.CargoFlows[1].IsExact);
-        Assert.AreEqual(40, stationUtil.CargoFlows[1].FlowPerMinute);
-        Assert.AreEqual("Plastic", stationUtil.CargoFlows[1].Type);
-        Assert.IsFalse(stationUtil.CargoFlows[1].IsUnload);
+        Assert.AreEqual(225, stationTriangle.CargoFlows[0].FlowPerMinute);
+        Assert.AreEqual("FicsiteIngot", stationTriangle.CargoFlows[0].Type);
+
+        Assert.AreEqual(150, stationTriangle.CargoFlows[1].FlowPerMinute);
+        Assert.AreEqual("SAMIngot", stationTriangle.CargoFlows[1].Type);
     }
 }

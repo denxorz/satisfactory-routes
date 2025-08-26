@@ -77,7 +77,6 @@ public sealed class TruckStationTests
         Assert.IsTrue(templeStations.All(s => s.Transporters.All(t => t.From == s.Id)));
         Assert.AreEqual("2147329195", templeStations[0].Transporters[0].Id);
         Assert.AreEqual("2147340529", templeStations[0].Transporters[0].To);
-        //Assert.AreEqual("2147340529", templeStations[0].Transporters[0].OtherStops[0]);
     }
 
     [TestMethod]

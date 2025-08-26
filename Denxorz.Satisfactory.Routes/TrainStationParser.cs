@@ -35,7 +35,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
         // Train Station Identifier, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
         var trainStationIdentifiers = trainRelatedObjectsByType["/Script/FactoryGame.FGTrainStationIdentifier"];
         var trainStationIdentifiersByStationId = trainStationIdentifiers
-            .Select(t => new
+            .Select(t => new 
             {
                 Id = t.ObjectReference.PathName,
                 Name = (t.Properties.FirstOrDefault(p => p.Name == "mStationName") as TextProperty)?.Value ?? "No custom name",
@@ -49,12 +49,10 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
         var trainStationDockings = trainRelatedObjectsByType["/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainDockingStation.Build_TrainDockingStation_C"];
         var trainStationDockingsByStationId = trainStationDockings
             .OfType<ActorObject>()
-            .Select(t => new
-            {
-                Id = t.ObjectReference.PathName,
-                InventoryId = (t.Properties.FirstOrDefault(p => p.Name == "mInventory") as ObjectProperty)?.Value.PathName ?? "??",
-                IsUnloadMode = t.Properties.FirstOrDefault(p => p.Name == "mIsInLoadMode") is BoolProperty { Value: 0 },
-            })
+            .Select(t => new Platform(
+                t.ObjectReference.PathName,
+                (t.Properties.FirstOrDefault(p => p.Name == "mInventory") as ObjectProperty)?.Value.PathName ?? "??",
+                t.Properties.FirstOrDefault(p => p.Name == "mIsInLoadMode") is BoolProperty { Value: 0 }))
             .ToDictionary(t => t.Id, t => t);
 
         // Train Station Docking Platform, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
@@ -66,6 +64,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                 t => t.Value
                 .Select(tt => trainStationDockingsByStationId.TryGetValue(string.Join('.', (tt.Properties.FirstOrDefault(o => o.Name == "mConnectedTo") as ObjectProperty)?.Value.PathName.Split('.')[..^1] ?? []), out var aa0) ? aa0 : null)
                 .Where(tt => tt is not null)
+                .Cast<Platform>()
                 .ToList());
 
         // Train Station, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
@@ -77,9 +76,9 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                 var id = t.ObjectReference.PathName;
                 var idShort = id.Split("_")[^1];
                 var stationIdentifier = trainStationIdentifiersByStationId[id];
-                var platforms = trainStationConnectionToPlatformsByStationId[id];
-                var inventory = platforms.Count > 0 ? objectsByName[platforms[0]!.InventoryId] : null;
-                var cargoTypes = inventory.ToCargoTypes();
+                var platforms = GetAllConnectedPlatforms(id, trainStationConnectionToPlatformsByStationId);
+                var inventories = platforms.Count > 0 ? platforms.Select(p => objectsByName[p!.InventoryId]).ToList() : [];
+                var cargoTypes = inventories.SelectMany(inv => inv.ToCargoTypes()).Distinct().ToList();
                 var cargo = stationIdentifier.Name.GetFlowPerMinuteFromName(cargoTypes);
                 var isUnload = platforms.Count > 0 && platforms[0]!.IsUnloadMode;
 
@@ -95,8 +94,8 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                         .Where(ttt => ttt.StopStationIds.Contains(stationIdentifier.Id))
                         .Select(ttt => {
                             var all = ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).Where(ssi => ssi != id).Select(ssi => ssi.Split("_")[^1]).ToList();
-                            var from = isUnload ? all.First() : idShort;
-                            var to = isUnload ? idShort : all.First();
+                            var from = isUnload ? all[0] : idShort;
+                            var to = isUnload ? idShort : all[0];
                             var others = all.Skip(1).ToList();
                             return new Transporter(
                                 ttt.Id.Split("_")[^1],
@@ -109,6 +108,27 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                     t.Position.Y
                 );
             });
+    }
+
+    private sealed record Platform(string Id, string InventoryId, bool IsUnloadMode);
+
+    private static List<Platform> GetAllConnectedPlatforms(string platformId, Dictionary<string, List<Platform>> trainStationConnectionToPlatformsByStationId)
+    {
+        return GetAllConnectedPlatformsRecursive(platformId, trainStationConnectionToPlatformsByStationId, []);
+    }
+
+    private static List<Platform> GetAllConnectedPlatformsRecursive(string platformId, Dictionary<string, List<Platform>> trainStationConnectionToPlatformsByStationId, List<string> done)
+    {
+        if (done.Contains(platformId))
+        {
+            return [];
+        }
+
+        var platforms = trainStationConnectionToPlatformsByStationId[platformId] ?? [];
+        List<string> newDone = [.. done, platformId];
+
+        var connectedTo = platforms.SelectMany(p => GetAllConnectedPlatformsRecursive(p.Id, trainStationConnectionToPlatformsByStationId, newDone));
+        return [.. platforms, .. connectedTo];
     }
 }
 
