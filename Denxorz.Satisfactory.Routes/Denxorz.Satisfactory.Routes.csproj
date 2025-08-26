@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
-    <PackageReference Include="SatisfactorySaveNet" Version="3.0.0" />
+    <PackageReference Include="SatisfactorySaveNet" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
