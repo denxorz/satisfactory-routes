@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Text.Json;
-using SatisfactorySaveNet.Abstracts.Model;
+﻿using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 
 namespace Denxorz.Satisfactory.Routes;
@@ -109,7 +107,6 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
                 var targetListId = targetListIdByStationId[t.Id];
                 var unloadStationId = unloadStationIdByTargetListId.TryGetValue(targetListId, out var tmp) ? tmp : "??";
                 var otherStations = stationIdsByTargetListId[targetListId].Where(s => s != t.Id && s != unloadStationId).Select(s => s.Split("_")[^1]).ToList();
-                var otherStations2 = stationIdsByTargetListId[targetListId].ToList();
 
                 var vehicles = t.IsUnload ? [] : vehiclesByTargetListId[targetListId]
                     .Select(v => new Transporter(

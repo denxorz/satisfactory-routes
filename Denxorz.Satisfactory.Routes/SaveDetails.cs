@@ -4,7 +4,7 @@ using SatisfactorySaveNet.Abstracts.Model;
 
 namespace Denxorz.Satisfactory.Routes;
 
-public record SaveDetails(List<Station> Stations)
+public record SaveDetails(List<Station> Stations, List<Uploader> Uploaders)
 {
     public static SaveDetails LoadFromStream(Stream stream)
     {
@@ -24,7 +24,8 @@ public record SaveDetails(List<Station> Stations)
             .. new TrainStationParser(objects, objectsByName).Parse(),
             .. new DroneStationParser(objects, objectsByName).Parse(),
             .. new TruckStationParser(objects, objectsByName).Parse(),
-        ]);
+        ],
+        [.. new UploaderParser(objects, objectsByName).Parse()]);
     }
 }
 
