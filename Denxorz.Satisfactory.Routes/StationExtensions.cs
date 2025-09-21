@@ -83,7 +83,7 @@ public static class StationExtensions
                     flows.Add(new(
                         cargoType,
                         splittedGroup[0].StartsWith("in", StringComparison.InvariantCultureIgnoreCase),
-                        float.TryParse(flowLowest, NumberStyles.Float, CultureInfo.InvariantCulture, out float f) ? (int)Math.Ceiling(f) : null,
+                        double.TryParse(flowLowest, NumberStyles.Float, CultureInfo.InvariantCulture, out var f) ? f : null,
                         !flowAsString.StartsWith('~')));
                 }
 
