@@ -69,4 +69,6 @@ The current parser assumes some things. If you need other specs, let me know in 
 
 ## Versions & Release Notes
 
-version 1.0: First version (.NET 8)
+- version 1.2: Add Factory stats
+- version 1.1: Add Uploaders
+- version 1.0: First version (.NET 8)
