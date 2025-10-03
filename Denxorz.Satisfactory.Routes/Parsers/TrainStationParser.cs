@@ -2,7 +2,7 @@
 using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 
-namespace Denxorz.Satisfactory.Routes;
+namespace Denxorz.Satisfactory.Routes.Parsers;
 
 public class TrainStationParser(List<ComponentObject> objects, Dictionary<string, ComponentObject> objectsByName)
 {

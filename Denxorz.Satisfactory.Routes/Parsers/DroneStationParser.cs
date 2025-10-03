@@ -3,7 +3,7 @@ using SatisfactorySaveNet.Abstracts.Model.Properties;
 using System.Linq;
 using System.Text.Json;
 
-namespace Denxorz.Satisfactory.Routes;
+namespace Denxorz.Satisfactory.Routes.Parsers;
 
 public class DroneStationParser(List<ComponentObject> objects, Dictionary<string, ComponentObject> objectsByName)
 {

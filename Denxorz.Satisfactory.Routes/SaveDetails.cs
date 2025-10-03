@@ -2,7 +2,7 @@
 using SatisfactorySaveNet.Abstracts;
 using SatisfactorySaveNet.Abstracts.Model;
 
-namespace Denxorz.Satisfactory.Routes;
+namespace Denxorz.Satisfactory.Routes.Parsers;
 
 public record SaveDetails(List<Station> Stations, List<Uploader> Uploaders, List<Factory> Factories)
 {

@@ -1,7 +1,7 @@
 ﻿using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 
-namespace Denxorz.Satisfactory.Routes;
+namespace Denxorz.Satisfactory.Routes.Parsers;
 
 public class TruckStationParser(List<ComponentObject> objects, Dictionary<string, ComponentObject> objectsByName)
 {
@@ -79,7 +79,7 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
             .ToDictionary(t => t.Key, t => t.Select(t => t.StationId).ToList());
 
         var unloadStationIdByTargetListId = targetListIdByStationId
-            .Select(t => new { TargetListId = t.Value, StationId = t.Key, IsUnload = (simpleTruckStationsByStationId.TryGetValue(t.Key, out var tmp) ? tmp.IsUnload : (bool?)null) })
+            .Select(t => new { TargetListId = t.Value, StationId = t.Key, IsUnload = simpleTruckStationsByStationId.TryGetValue(t.Key, out var tmp) ? tmp.IsUnload : (bool?)null })
             .Where(t => t.IsUnload == true)
             .GroupBy(t => t.TargetListId)
             .ToDictionary(t => t.Key, t => t.First().StationId);

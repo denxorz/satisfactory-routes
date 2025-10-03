@@ -5,7 +5,7 @@ using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 using SatisfactorySaveNet.Abstracts.Model.Typed;
 
-namespace Denxorz.Satisfactory.Routes;
+namespace Denxorz.Satisfactory.Routes.Parsers;
 
 public static class StationExtensions
 {

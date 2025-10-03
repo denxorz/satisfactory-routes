@@ -1,4 +1,6 @@
-﻿namespace Denxorz.Satisfactory.Routes.Tests.Unit;
+﻿using Denxorz.Satisfactory.Routes.Parsers;
+
+namespace Denxorz.Satisfactory.Routes.Tests.Unit;
 
 [TestClass]
 public sealed class StationTests
