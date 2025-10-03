@@ -32,4 +32,10 @@ public sealed class FactoryTests
     {
         Assert.AreEqual(27, StationTests.ClassUnderTest.Factories[61].PercentageProducing);
     }
+
+    [TestMethod]
+    public void GetsPowerCircuitId()
+    {
+        Assert.AreEqual(26, StationTests.ClassUnderTest.Factories[61].PowerCircuitId);
+    }
 }
