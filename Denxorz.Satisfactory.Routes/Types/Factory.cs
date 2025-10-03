@@ -1,4 +1,4 @@
-﻿namespace Denxorz.Satisfactory.Routes;
+﻿namespace Denxorz.Satisfactory.Routes.Types;
 
 public record Factory(
     string Id,

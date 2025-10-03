@@ -1,4 +1,5 @@
-﻿using SatisfactorySaveNet.Abstracts.Model;
+﻿using Denxorz.Satisfactory.Routes.Types;
+using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 
 namespace Denxorz.Satisfactory.Routes.Parsers;

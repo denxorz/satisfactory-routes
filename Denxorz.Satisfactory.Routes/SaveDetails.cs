@@ -1,4 +1,5 @@
-﻿using SatisfactorySaveNet;
+﻿using Denxorz.Satisfactory.Routes.Types;
+using SatisfactorySaveNet;
 using SatisfactorySaveNet.Abstracts;
 using SatisfactorySaveNet.Abstracts.Model;
 

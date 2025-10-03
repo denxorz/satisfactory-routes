@@ -1,4 +1,5 @@
 ﻿using Denxorz.Satisfactory.Routes.Parsers;
+using Denxorz.Satisfactory.Routes.Types;
 
 namespace Denxorz.Satisfactory.Routes.Tests.Unit;
 
