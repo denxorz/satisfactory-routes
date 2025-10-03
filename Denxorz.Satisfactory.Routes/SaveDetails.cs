@@ -1,9 +1,10 @@
-﻿using Denxorz.Satisfactory.Routes.Types;
+﻿using Denxorz.Satisfactory.Routes.Parsers;
+using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet;
 using SatisfactorySaveNet.Abstracts;
 using SatisfactorySaveNet.Abstracts.Model;
 
-namespace Denxorz.Satisfactory.Routes.Parsers;
+namespace Denxorz.Satisfactory.Routes;
 
 public record SaveDetails(List<Station> Stations, List<Uploader> Uploaders, List<Factory> Factories)
 {
