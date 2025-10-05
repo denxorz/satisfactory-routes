@@ -17,7 +17,7 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
             })
             .Where(o => o.Components.Count > 1)
             .OrderBy(o => o.CircuitId)
-            .SelectMany((o, i) => o.Components.Select(c => new { ObjectReference = c, CircuitIndex = i }))
+            .SelectMany((o, i) => o.Components.Select(c => new { ObjectReference = string.Join(".", c.Split('.').Take(2)), CircuitIndex = i }))
             .DistinctBy(o => o.ObjectReference)
             .ToDictionary(o => o.ObjectReference, o => o.CircuitIndex);
 
@@ -29,7 +29,6 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
               .OfType<ActorObject>()
               .Select(o =>
               {
-
                   var shortId = o.ObjectReference.PathName.Split("_")[^1];
 
                   var typeFull = o.TypePath.Replace("/Game/FactoryGame/Buildable/Factory/", null);
@@ -38,13 +37,11 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   var percentageProducing = Math.Floor(((o.Properties.FirstOrDefault(p => p.Name == "mCurrentProductivityMeasurementProduceDuration") as FloatProperty)?.Value ?? 0) /
                     ((o.Properties.FirstOrDefault(p => p.Name == "mCurrentProductivityMeasurementDuration") as FloatProperty)?.Value ?? 100) * 100);
 
-                  var powerInfo = (o.Properties.FirstOrDefault(p => p.Name == "mPowerInfo") as ObjectProperty)?.Value.PathName ?? "";
-
                   return new Factory(
                       shortId,
                       type,
                       (int)percentageProducing,
-                      powerCircuits.TryGetValue(powerInfo, out var circuit) ? circuit : -1,
+                      powerCircuits.TryGetValue(o.ObjectReference.PathName, out var circuit) ? circuit : -1,
                       o.Position.X,
                       o.Position.Y
                   );
