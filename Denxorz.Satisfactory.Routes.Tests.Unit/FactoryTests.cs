@@ -37,6 +37,7 @@ public sealed class FactoryTests
     [TestMethod]
     public void GetsPowerCircuitId()
     {
-        Assert.AreEqual(26, StationTests.ClassUnderTest.Factories[61].PowerCircuitId);
+        Assert.AreEqual(0, StationTests.ClassUnderTest.Factories[61].MainPowerCircuitId);
+        Assert.AreEqual(110, StationTests.ClassUnderTest.Factories[61].SubPowerCircuitId);
     }
 }

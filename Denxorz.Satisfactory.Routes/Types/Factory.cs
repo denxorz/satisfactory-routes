@@ -4,6 +4,7 @@ public record Factory(
     string Id,
     string Type,
     int PercentageProducing,
-    int PowerCircuitId,
+    int MainPowerCircuitId,
+    int SubPowerCircuitId,
     float X,
     float Y);
