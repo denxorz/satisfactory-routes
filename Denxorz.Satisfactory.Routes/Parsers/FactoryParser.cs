@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Denxorz.Satisfactory.Routes.Types;
+﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 
@@ -14,15 +13,11 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
             .Select(o => new
             {
                 CircuitId = (o.Properties.FirstOrDefault(p => p.Name == "mCircuitID") as IntProperty)?.Value ?? 0,
-                Components = ((o.Properties.FirstOrDefault(p => p.Name == "mComponents") as ArrayProperty)?.Property as ArrayObjectProperty)?.Values.Select(c => c.PathName).ToList(),
+                Components = ((o.Properties.FirstOrDefault(p => p.Name == "mComponents") as ArrayProperty)?.Property as ArrayObjectProperty)?.Values.Select(c => c.PathName).ToList() ?? [],
             })
-            .Where(o => (o.Components ?? []).Count > 1)
+            .Where(o => o.Components.Count > 1)
             .OrderBy(o => o.CircuitId)
-            .SelectMany((o, i) => (o.Components ?? []).Select(c =>
-                {
-                    var componentReferenceSplitted = c.Split('.');
-                    return new { ObjectReference = $"{componentReferenceSplitted[0]}.{componentReferenceSplitted[1]}", CircuitIndex = i };
-                }))
+            .SelectMany((o, i) => o.Components.Select(c => new { ObjectReference = c, CircuitIndex = i }))
             .DistinctBy(o => o.ObjectReference)
             .ToDictionary(o => o.ObjectReference, o => o.CircuitIndex);
 
@@ -43,11 +38,13 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   var percentageProducing = Math.Floor(((o.Properties.FirstOrDefault(p => p.Name == "mCurrentProductivityMeasurementProduceDuration") as FloatProperty)?.Value ?? 0) /
                     ((o.Properties.FirstOrDefault(p => p.Name == "mCurrentProductivityMeasurementDuration") as FloatProperty)?.Value ?? 100) * 100);
 
+                  var powerInfo = (o.Properties.FirstOrDefault(p => p.Name == "mPowerInfo") as ObjectProperty)?.Value.PathName ?? "";
+
                   return new Factory(
                       shortId,
                       type,
                       (int)percentageProducing,
-                      powerCircuits.TryGetValue(o.ObjectReference.PathName, out var circuit) ? circuit : -1,
+                      powerCircuits.TryGetValue(powerInfo, out var circuit) ? circuit : -1,
                       o.Position.X,
                       o.Position.Y
                   );

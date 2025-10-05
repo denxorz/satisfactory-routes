@@ -31,6 +31,7 @@ public sealed class FactoryTests
     public void GetsPercentageProducing()
     {
         Assert.AreEqual(27, StationTests.ClassUnderTest.Factories[61].PercentageProducing);
+        Assert.AreEqual(1939, StationTests.ClassUnderTest.Factories.Count(f => f.PercentageProducing > 0));
     }
 
     [TestMethod]
