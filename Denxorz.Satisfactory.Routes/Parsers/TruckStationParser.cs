@@ -34,7 +34,7 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
             {
                 t.VehicleInfo,
                 t.Vehicle,
-                TargetListId = (t.Vehicle.Properties.First(p => p.Name == "mTargetList") as ObjectProperty)!.Value.PathName
+                TargetListId = t.Vehicle.Properties.GetObjectPathName( "mTargetList")
             })
             .Where(t => !string.IsNullOrWhiteSpace(t.TargetListId))
             .GroupBy(t => t.TargetListId)
@@ -91,8 +91,8 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
             .Select(t => new
             {
                 Id = t.ObjectReference.PathName,
-                Name = (t.Properties.FirstOrDefault(p => p.Name == "mBuildingTag") as StrProperty)?.Value ?? "No custom name",
-                TruckStationId = (t.Properties.FirstOrDefault(p => p.Name == "mStation") as ObjectProperty)?.Value.PathName ?? "??",
+                Name = t.Properties.GetString("mBuildingTag") ?? "No custom name",
+                TruckStationId = t.Properties.GetObjectPathName("mStation"),
             })
             .ToDictionary(t => t.TruckStationId, t => t);
 

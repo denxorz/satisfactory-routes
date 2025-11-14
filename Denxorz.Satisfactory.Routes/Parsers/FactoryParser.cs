@@ -1,6 +1,5 @@
 ﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
-using SatisfactorySaveNet.Abstracts.Model.Properties;
 
 namespace Denxorz.Satisfactory.Routes.Parsers;
 
@@ -12,8 +11,8 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
             .Where(o => o.TypePath == "/Script/FactoryGame.FGPowerCircuit")
             .Select(o => new
             {
-                CircuitId = (o.Properties.FirstOrDefault(p => p.Name == "mCircuitID") as IntProperty)?.Value ?? 0,
-                Components = ((o.Properties.FirstOrDefault(p => p.Name == "mComponents") as ArrayProperty)?.Property as ArrayObjectProperty)?.Values.Select(c => c.PathName).ToList() ?? [],
+                CircuitId = o.Properties.GetInt("mCircuitID") ?? 0,
+                Components = o.Properties.GetObjectArray("mComponents").Select(c => c.PathName).ToList(),
             })
             .Where(o => o.Components.Count > 1)
             .ToList();
@@ -29,7 +28,7 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
 
         var switches = objects
               .Where(o => o.TypePath.EndsWith("PowerSwitch_C"))
-              .Where(o => o.Properties.FirstOrDefault(p => p.Name == "mIsSwitchOn") is BoolProperty { Value: 1 })
+              .Where(o => o.Properties.GetBool("mIsSwitchOn") == true)
               .OfType<ActorObject>()
               .ToList();
 
@@ -55,8 +54,8 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   var typeFull = o.TypePath.Replace("/Game/FactoryGame/Buildable/Factory/", null);
                   var type = typeFull[..typeFull.IndexOf('/')];
 
-                  var percentageProducing = Math.Floor(((o.Properties.FirstOrDefault(p => p.Name == "mCurrentProductivityMeasurementProduceDuration") as FloatProperty)?.Value ?? 0) /
-                    ((o.Properties.FirstOrDefault(p => p.Name == "mCurrentProductivityMeasurementDuration") as FloatProperty)?.Value ?? 100) * 100);
+                  var percentageProducing = Math.Floor((o.Properties.GetFloat("mCurrentProductivityMeasurementProduceDuration") ?? 0) /
+                    (o.Properties.GetFloat("mCurrentProductivityMeasurementDuration") ?? 100) * 100);
 
                   var subCircuitId = powerCircuitsByShortenendReference.TryGetValue(o.ObjectReference.PathName, out var circuit) ? circuit : -1;
 

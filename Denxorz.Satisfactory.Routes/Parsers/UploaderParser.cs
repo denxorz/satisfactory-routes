@@ -1,6 +1,5 @@
 ﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
-using SatisfactorySaveNet.Abstracts.Model.Properties;
 
 namespace Denxorz.Satisfactory.Routes.Parsers;
 
@@ -14,7 +13,7 @@ public class UploaderParser(List<ComponentObject> objects, Dictionary<string, Co
             .Select(t =>
             {
                 var shortId = t.ObjectReference.PathName.Split("_")[^1];
-                var inventory = objectsByName[(t.Properties.FirstOrDefault(p => p.Name == "mStorageInventory") as ObjectProperty)?.Value.PathName ?? "??"];
+                var inventory = objectsByName[t.Properties.GetObjectPathName("mStorageInventory")];
                 var cargoTypes = inventory.ToCargoTypes();
 
                 return new Uploader(

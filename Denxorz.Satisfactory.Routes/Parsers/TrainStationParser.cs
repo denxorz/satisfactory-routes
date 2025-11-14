@@ -1,6 +1,6 @@
 ﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
-using SatisfactorySaveNet.Abstracts.Model.Properties;
+using SatisfactorySaveNet.Abstracts.Model.Typed;
 
 namespace Denxorz.Satisfactory.Routes.Parsers;
 
@@ -23,14 +23,14 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .Select(t => new
             {
                 Id = t.ObjectReference.PathName,
-                StopStationIds = t.Properties.FirstOrDefault(p => p.Name == "mStops").ToStops()
+                StopStationIds = t.Properties.GetTypedArray<ArrayProperties>("mStops").ToStops()
             })
             .ToList();
 
         var trainNameByTimeTableId = trainRelatedObjectsByType.GetGroup("/Game/FactoryGame/Buildable/Vehicle/Train/-Shared/BP_Train.BP_Train_C")
             .ToDictionary(
-                t => t.Properties.FirstOrDefault(p => p.Name == "TimeTable") is ObjectProperty op ? op.Value.PathName : "??", 
-                t => t.Properties.FirstOrDefault(p => p.Name == "mTrainName") is TextProperty tp ? tp.Value : null);
+                t => t.Properties.GetObjectPathName("TimeTable"), 
+                t => t.Properties.GetText("mTrainName"));
 
         // Train Station Identifier, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
         var trainStationIdentifiers = trainRelatedObjectsByType.GetGroup("/Script/FactoryGame.FGTrainStationIdentifier");
@@ -38,8 +38,8 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .Select(t => new 
             {
                 Id = t.ObjectReference.PathName,
-                Name = (t.Properties.FirstOrDefault(p => p.Name == "mStationName") as TextProperty)?.Value ?? "No custom name",
-                TrainStationId = (t.Properties.FirstOrDefault(p => p.Name == "mStation") as ObjectProperty)?.Value.PathName ?? "??",
+                Name = t.Properties.GetText("mStationName") ?? "No custom name",
+                TrainStationId = t.Properties.GetObjectPathName("mStation"),
             })
             .ToDictionary(t => t.TrainStationId, t => t);
 
@@ -51,8 +51,8 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .OfType<ActorObject>()
             .Select(t => new Platform(
                 t.ObjectReference.PathName,
-                (t.Properties.FirstOrDefault(p => p.Name == "mInventory") as ObjectProperty)?.Value.PathName ?? "??",
-                t.Properties.FirstOrDefault(p => p.Name == "mIsInLoadMode") is BoolProperty { Value: 0 }))
+                t.Properties.GetObjectPathName("mInventory"),
+                t.Properties.GetBool("mIsInLoadMode") == false))
             .ToDictionary(t => t.Id, t => t);
 
         // Train Station Docking Platform, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
@@ -62,7 +62,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .ToDictionary(
                 t => t.Key,
                 t => t.Value
-                .Select(tt => trainStationDockingsByStationId.TryGetValue(string.Join('.', (tt.Properties.FirstOrDefault(o => o.Name == "mConnectedTo") as ObjectProperty)?.Value.PathName.Split('.')[..^1] ?? []), out var aa0) ? aa0 : null)
+                .Select(tt => trainStationDockingsByStationId.TryGetValue(string.Join('.', tt.Properties.GetObjectPathName("mConnectedTo").Split('.')[..^1] ?? []), out var aa0) ? aa0 : null)
                 .Where(tt => tt is not null)
                 .Cast<Platform>()
                 .ToList());

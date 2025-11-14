@@ -20,19 +20,13 @@ public static class StationExtensions
         return fullName.Split('[')[0].Trim();
     }
 
-    public static string[] ToStops(this Property? p)
+    public static string[] ToStops(this ICollection<ArrayProperties> stops)
     {
-        var arrayProperty = p as ArrayProperty;
-        var arrayPropertyValues = arrayProperty?.Property is ArrayStructProperty arrayStruct ? arrayStruct.Values : [];
-        var arrayProperties = arrayPropertyValues.OfType<ArrayProperties>();
-        var stationIds = arrayProperties
+        return [.. stops
             .SelectMany(sp => sp.Values
                 .Where(spp => spp.Name == "Station")
                 .OfType<ObjectProperty>()
-                .Select(spp => spp.Value.PathName))
-            .ToArray();
-
-        return stationIds;
+                .Select(spp => spp.Value.PathName))];
     }
 
     public static List<string> ToCargoTypes(this ComponentObject? inventory)
@@ -42,8 +36,8 @@ public static class StationExtensions
             return [];
         }
 
-        var stacks = ((inventory.Properties.FirstOrDefault(p => p.Name == "mInventoryStacks") as ArrayProperty)?.Property as ArrayStructProperty)?.Values as TypedData[] ?? [];
-        var inventoryItemStacks = stacks.Select(s => ((s as ArrayProperties)?.Values.FirstOrDefault() as StructProperty)?.Value as InventoryItem);
+        var stacks = inventory.Properties.GetTypedArray<ArrayProperties>("mInventoryStacks");
+        var inventoryItemStacks = stacks.Select(s => (s.Values.FirstOrDefault() as StructProperty)?.Value as InventoryItem);
         var allStacksWithItems = inventoryItemStacks.Where(item => item?.ExtraProperty is IntProperty { Value: > 0 });
         var allStacksWithItemsDistinct = allStacksWithItems.Select(s => PrettyItemName(s?.ItemType?.Split(".")[^1] ?? "")).Distinct().Where(s => !string.IsNullOrWhiteSpace(s));
 

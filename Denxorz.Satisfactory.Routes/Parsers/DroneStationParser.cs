@@ -1,6 +1,5 @@
 ﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
-using SatisfactorySaveNet.Abstracts.Model.Properties;
 
 namespace Denxorz.Satisfactory.Routes.Parsers;
 
@@ -23,9 +22,9 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
             .Select(t => new
             {
                 Id = t.ObjectReference.PathName,
-                Name = (t.Properties.FirstOrDefault(p => p.Name == "mBuildingTag") as StrProperty)?.Value ?? "No custom name",
-                DroneStationId = (t.Properties.FirstOrDefault(p => p.Name == "mStation") as ObjectProperty)?.Value.PathName ?? "??",
-                PairedStationId = (t.Properties.FirstOrDefault(p => p.Name == "mPairedStation") as ObjectProperty)?.Value.PathName ?? "??", //Persistent_Level:PersistentLevel.FGDroneStationInfo_2147135058
+                Name = t.Properties.GetString("mBuildingTag") ?? "No custom name",
+                DroneStationId = t.Properties.GetObjectPathName("mStation"),
+                PairedStationId = t.Properties.GetObjectPathName("mPairedStation"),
             })
             .ToDictionary(t => t.DroneStationId, t => t);
 
@@ -39,9 +38,9 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
             {
                 var id = t.ObjectReference.PathName;
                 var stationIdentifier = droneStationIdentifiersByStationId[id];
-                var drone = (t.Properties.FirstOrDefault(p => p.Name == "mStationDrone") as ObjectProperty)?.Value.PathName ?? "??";
-                var inputInventory = objectsByName[(t.Properties.FirstOrDefault(p => p.Name == "mInputInventory") as ObjectProperty)?.Value.PathName ?? "??"];
-                var outputInventory = objectsByName[(t.Properties.FirstOrDefault(p => p.Name == "mOutputInventory") as ObjectProperty)?.Value.PathName ?? "??"];
+                var drone = t.Properties.GetObjectPathName("mStationDrone");
+                var inputInventory = objectsByName[t.Properties.GetObjectPathName("mInputInventory")];
+                var outputInventory = objectsByName[t.Properties.GetObjectPathName("mOutputInventory")];
                 var inputCargoTypes = inputInventory.ToCargoTypes();
                 var outputCargoTypes = outputInventory.ToCargoTypes();
                 var isUnload = inputCargoTypes.Count <= outputCargoTypes.Count;
