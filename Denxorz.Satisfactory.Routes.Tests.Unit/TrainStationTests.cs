@@ -18,7 +18,7 @@ public sealed class TrainStationTests
     [TestMethod]
     public void GetsNames()
     {
-        Assert.AreEqual(3, northStations.Count);
+        Assert.HasCount(3, northStations);
     }
 
     [TestMethod]

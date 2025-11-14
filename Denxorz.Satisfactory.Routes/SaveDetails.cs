@@ -1,7 +1,5 @@
-﻿using Denxorz.Satisfactory.Routes.Parsers;
-using Denxorz.Satisfactory.Routes.Types;
+﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet;
-using SatisfactorySaveNet.Abstracts;
 using SatisfactorySaveNet.Abstracts.Model;
 
 namespace Denxorz.Satisfactory.Routes;
@@ -10,28 +8,24 @@ public record SaveDetails(List<Station> Stations, List<Uploader> Uploaders, List
 {
     public static SaveDetails LoadFromStream(Stream stream)
     {
-        ISaveFileSerializer serializer = SaveFileSerializer.Instance;
-        var saveGame = serializer.Deserialize(stream);
+        return LoadObjectsFromStream(stream).Parse();
+    }
 
-        var objects = saveGame.Body is BodyV8 v8
+    public static (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) LoadObjectsFromStream(Stream stream)
+    {
+        var saveGame = SaveFileSerializer.Instance.Deserialize(stream);
+
+        var objects= saveGame.Body is BodyV8 v8
             ? v8
                 .Levels
                 .SelectMany(l => l.Objects)
                 .ToList()
             : [];
 
-
         var objectsByName = objects
             .DistinctBy(o => o.ObjectReference.PathName)
             .ToDictionary(o => o.ObjectReference.PathName, o => o);
 
-        return new([
-            .. new TrainStationParser(objects, objectsByName).Parse(),
-            .. new DroneStationParser(objects, objectsByName).Parse(),
-            .. new TruckStationParser(objects, objectsByName).Parse(),
-        ],
-        [.. new UploaderParser(objects, objectsByName).Parse()],
-        [.. new FactoryParser(objects, objectsByName).Parse()]);
+        return (objects, objectsByName);
     }
 }
-

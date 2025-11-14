@@ -6,7 +6,7 @@ public sealed class FactoryTests
     [TestMethod]
     public void GetsAllFactories()
     {
-        Assert.AreEqual(2163, StationTests.ClassUnderTest.Factories.Count);
+        Assert.HasCount(2163, StationTests.ClassUnderTest.Factories);
     }
 
     [TestMethod]

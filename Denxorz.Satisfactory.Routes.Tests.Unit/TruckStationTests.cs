@@ -18,7 +18,7 @@ public sealed class TruckStationTests
     [TestMethod]
     public void GetsNames()
     {
-        Assert.AreEqual(1, templeStations.Count);
+        Assert.HasCount(1, templeStations);
     }
 
     [TestMethod]
@@ -60,7 +60,7 @@ public sealed class TruckStationTests
         Assert.IsTrue(flow1.IsUnload);
 
         // Incorrect naming
-        Assert.AreEqual(0, utilStations[1].CargoFlows.Count);
+        Assert.IsEmpty(utilStations[1].CargoFlows);
     }
 
     [TestMethod]

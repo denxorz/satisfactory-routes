@@ -20,12 +20,14 @@ dotnet add package Denxorz.Satisfactory.Routes
 
 ## Usage
 
+Load and parse everything.
+
 ```csharp
 using Denxorz.Satisfactory.Routes;
 
 var save = SaveDetails.LoadFromStream(File.OpenRead("MySave.sav"));
 
-foreach (var station in stations)
+foreach (var station in save.Stations)
 {
     Console.WriteLine($"Station: {station.Name}");
     foreach (var cargo in station.CargoFlows)
@@ -36,6 +38,19 @@ foreach (var station in stations)
     {
         Console.WriteLine($"\t- Vehicle: from {vehicle.From} - to {vehicle.To}");
     }
+}
+```
+
+Load and then parse only a part, like factories. 
+
+```csharp
+using Denxorz.Satisfactory.Routes;
+
+var save = SaveDetails.LoadObjectsFromStream(File.OpenRead("MySave.sav")); 
+
+foreach (var factory in save.ParseFactories())
+{
+    Console.WriteLine($"Factory: {factory.Name} running at {factory.PercentageProducing}% with power from circuit: {factory.MainPowerCircuitId}");
 }
 ```
 
@@ -69,6 +84,7 @@ The current parser assumes some things. If you need other specs, let me know in 
 
 ## Versions & Release Notes
 
+- version 1.3: Handle more edge cases + Add .NET 10 support + Seperate load methods
 - version 1.2: Add Factory stats
 - version 1.1: Add Uploaders
 - version 1.0: First version (.NET 8)

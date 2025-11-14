@@ -6,7 +6,7 @@ public sealed class UploaderTests
     [TestMethod]
     public void GetsAllUploaders()
     {
-        Assert.AreEqual(69, StationTests.ClassUnderTest.Uploaders.Count);
+        Assert.HasCount(69, StationTests.ClassUnderTest.Uploaders);
     }
 
     [TestMethod]

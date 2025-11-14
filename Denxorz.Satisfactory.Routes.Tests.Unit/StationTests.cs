@@ -19,17 +19,18 @@ public sealed class StationTests
         // Besides that, this improves readability of the tests.
         // And if it does not work, the tests will fail anyway.
 
-        ClassUnderTest = SaveDetails.LoadFromStream(File.OpenRead("BigSave.sav"));
+        var objects = SaveDetails.LoadObjectsFromStream(File.OpenRead("BigSave.sav"));
 
-        TrainStations = [.. ClassUnderTest.Stations.Where(s => s.Type == "train")];
-        DroneStations = [.. ClassUnderTest.Stations.Where(s => s.Type == "drone")];
-        TruckStations = [.. ClassUnderTest.Stations.Where(s => s.Type == "truck")];
+        ClassUnderTest = objects.Parse();
+        TrainStations = objects.ParseTrainStations();
+        DroneStations = objects.ParseDroneStations();
+        TruckStations = objects.ParseTruckStations();
     }
 
     [TestMethod]
     public void GetsAllStations()
     {
-        Assert.AreEqual(92, ClassUnderTest.Stations.Count);
+        Assert.HasCount(92, ClassUnderTest.Stations);
     }
 
     [TestMethod]
@@ -47,9 +48,9 @@ public sealed class StationTests
     [TestMethod]
     public void GetsStationTypes()
     {
-        Assert.AreEqual(53, TrainStations.Count);
-        Assert.AreEqual(29, DroneStations.Count);
-        Assert.AreEqual(10, TruckStations.Count);
+        Assert.HasCount(53, TrainStations);
+        Assert.HasCount(29, DroneStations);
+        Assert.HasCount(10, TruckStations);
     }
 
     [TestMethod]

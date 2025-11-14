@@ -18,7 +18,7 @@ public sealed class DroneStationTests
     [TestMethod]
     public void GetsNames()
     {
-        Assert.AreEqual(3, egelStations.Count);
+        Assert.HasCount(3, egelStations);
     }
 
     [TestMethod]
@@ -74,7 +74,7 @@ public sealed class DroneStationTests
         CargoFlow station3Flow = egelStations[2].CargoFlows[0];
         Assert.AreEqual("Fuel", station3Flow.Type);
         Assert.IsTrue(station3Flow.IsExact);
-        Assert.AreEqual(null, station3Flow.FlowPerMinute);
+        Assert.IsNull(station3Flow.FlowPerMinute);
         Assert.IsTrue(station3Flow.IsUnload);
     }
 
