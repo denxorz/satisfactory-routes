@@ -36,22 +36,20 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
             .OfType<ActorObject>()
             .Select(t =>
             {
-                var id = t.ObjectReference.PathName;
-                var stationIdentifier = droneStationIdentifiersByStationId[id];
-                var drone = t.Properties.GetObjectPathName("mStationDrone");
-                var inputInventory = objectsByName[t.Properties.GetObjectPathName("mInputInventory")];
-                var outputInventory = objectsByName[t.Properties.GetObjectPathName("mOutputInventory")];
-                var inputCargoTypes = inputInventory.ToCargoTypes();
-                var outputCargoTypes = outputInventory.ToCargoTypes();
+                var pathName = t.ObjectReference.PathName;
+                var stationIdentifier = droneStationIdentifiersByStationId[pathName];
+                var dronePathName = t.Properties.GetObjectPathName("mStationDrone");
+                var inputCargoTypes = t.Properties.GetObject(objectsByName, "mInputInventory").ToCargoTypes();
+                var outputCargoTypes = t.Properties.GetObject(objectsByName, "mOutputInventory").ToCargoTypes();
                 var isUnload = inputCargoTypes.Count <= outputCargoTypes.Count;
                 List<string> cargoTypes = [.. inputCargoTypes, .. outputCargoTypes];
                 var cargo = stationIdentifier.Name.GetFlowPerMinuteFromName(cargoTypes);
-                var shortId = id.Short();
+                var id = pathName.ToId();
 
                 var pairedStationIdentifier = droneStationIdentifiersByStationIdentifier.TryGetValue(stationIdentifier.PairedStationId, out var tmp1) ? tmp1 : null;
 
                 return new Station(
-                    shortId,
+                    id,
                     stationIdentifier.Name.ToIdOnlyName(),
                     stationIdentifier.Name,
                     "drone",
@@ -60,10 +58,10 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
                     isUnload,
                     pairedStationIdentifier is not null ? [
                         new Transporter(
-                            drone.Short(),
+                            dronePathName.ToId(),
                             stationIdentifier.Name,
-                            pairedStationIdentifier.DroneStationId.Short(), 
-                            shortId,
+                            pairedStationIdentifier.DroneStationId.ToId(), 
+                            id,
                             [])] : [],
                     t.Position.X,
                     t.Position.Y

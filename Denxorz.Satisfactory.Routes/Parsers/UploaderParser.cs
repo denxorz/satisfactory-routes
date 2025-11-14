@@ -12,12 +12,11 @@ public class UploaderParser(List<ComponentObject> objects, Dictionary<string, Co
             .OfType<ActorObject>()
             .Select(t =>
             {
-                var shortId = t.ObjectReference.PathName.Short();
-                var inventory = objectsByName[t.Properties.GetObjectPathName("mStorageInventory")];
-                var cargoTypes = inventory.ToCargoTypes();
+                var id = t.ObjectReference.PathName.ToId();
+                var cargoTypes = t.Properties.GetObject(objectsByName, "mStorageInventory").ToCargoTypes();
 
                 return new Uploader(
-                    shortId,
+                    id,
                     cargoTypes,
                     t.Position.X,
                     t.Position.Y

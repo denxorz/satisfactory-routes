@@ -10,16 +10,6 @@ namespace Denxorz.Satisfactory.Routes.Parsers;
 
 public static class StationExtensions
 {
-    public static string ToIdOnlyName(this string fullName)
-    {
-        if (fullName.StartsWith('['))
-        {
-            return fullName.Split('[')[1].Trim(']');
-        }
-
-        return fullName.Split('[')[0].Trim();
-    }
-
     public static string[] ToStops(this ICollection<ArrayProperties> stops)
     {
         return [.. stops

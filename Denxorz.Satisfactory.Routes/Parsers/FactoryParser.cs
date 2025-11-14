@@ -49,7 +49,7 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
               .OfType<ActorObject>()
               .Select(o =>
               {
-                  var shortId = o.ObjectReference.PathName.Short();
+                  var id = o.ObjectReference.PathName.ToId();
 
                   var typeFull = o.TypePath.Replace("/Game/FactoryGame/Buildable/Factory/", null);
                   var type = typeFull[..typeFull.IndexOf('/')];
@@ -60,7 +60,7 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   var subCircuitId = powerCircuitsByShortenendReference.TryGetValue(o.ObjectReference.PathName, out var circuit) ? circuit : -1;
 
                   return new Factory(
-                      shortId,
+                      id,
                       type,
                       (int)percentageProducing,
                       mainPowerCircuits.FindIndex(c => c.Contains(subCircuitId)),

@@ -30,6 +30,17 @@ public static class PropertiesExtensions
     public static string GetObjectPathName(this ICollection<Property> properties, string name)
         => properties.GetObjectReference(name)?.PathName ?? "??";
 
+    public static ComponentObject? GetObject(this ICollection<Property> properties, Dictionary<string, ComponentObject> objectsByName, string name)
+    {
+        var pathName =  properties.GetObjectReference(name)?.PathName;
+        if (pathName is null)
+        {
+            return null;
+        }
+
+        return objectsByName.TryGetValue(pathName, out var obj) ? obj : null;
+    }
+
     public static ICollection<ObjectReference> GetObjectArray(this ICollection<Property> properties, string name)
         => ((properties.GetByName(name) as ArrayProperty)?.Property as ArrayObjectProperty)?.Values ?? [];
 
