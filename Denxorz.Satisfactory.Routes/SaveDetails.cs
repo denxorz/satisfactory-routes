@@ -20,7 +20,10 @@ public record SaveDetails(List<Station> Stations, List<Uploader> Uploaders, List
                 .ToList()
             : [];
 
-        var objectsByName = objects.ToDictionary(o => o.ObjectReference.PathName, o => o);
+
+        var objectsByName = objects
+            .DistinctBy(o => o.ObjectReference.PathName)
+            .ToDictionary(o => o.ObjectReference.PathName, o => o);
 
         return new([
             .. new TrainStationParser(objects, objectsByName).Parse(),
