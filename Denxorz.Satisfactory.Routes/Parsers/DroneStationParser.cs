@@ -46,7 +46,7 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
                 var isUnload = inputCargoTypes.Count <= outputCargoTypes.Count;
                 List<string> cargoTypes = [.. inputCargoTypes, .. outputCargoTypes];
                 var cargo = stationIdentifier.Name.GetFlowPerMinuteFromName(cargoTypes);
-                var shortId = id.Split("_")[^1];
+                var shortId = id.Short();
 
                 var pairedStationIdentifier = droneStationIdentifiersByStationIdentifier.TryGetValue(stationIdentifier.PairedStationId, out var tmp1) ? tmp1 : null;
 
@@ -60,9 +60,9 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
                     isUnload,
                     pairedStationIdentifier is not null ? [
                         new Transporter(
-                            drone.Split("_")[^1],
+                            drone.Short(),
                             stationIdentifier.Name,
-                            pairedStationIdentifier.DroneStationId.Split("_")[^1], 
+                            pairedStationIdentifier.DroneStationId.Short(), 
                             shortId,
                             [])] : [],
                     t.Position.X,

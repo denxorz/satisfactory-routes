@@ -100,7 +100,7 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
         return [.. simpleTruckStations
             .Select(t =>
             {
-                var shortId = t.Id.Split("_")[^1];
+                var shortId = t.Id.Short();
                 var stationIdentifier = truckStationIdentifiersByStationId[t.Id];
                 var inventory = objectsByName[(t.Raw.Properties.FirstOrDefault(p => p.Name == "mInventory") as ObjectProperty)?.Value.PathName ?? "??"];
                 var cargoTypes = inventory.ToCargoTypes();
@@ -111,16 +111,16 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
                 if (targetListIdByStationId.TryGetValue(t.Id, out var targetListId))
                 {
                     var unloadStationId = unloadStationIdByTargetListId.TryGetValue(targetListId, out var tmp) ? tmp : "??";
-                    var otherStations = stationIdsByTargetListId[targetListId].Where(s => s != t.Id && s != unloadStationId).Select(s => s.Split("_")[^1]).ToList();
+                    var otherStations = stationIdsByTargetListId[targetListId].Where(s => s != t.Id && s != unloadStationId).Select(s => s.Short()).ToList();
 
                     vehicles = t.IsUnload
                     ? []
                     : [.. vehiclesByTargetListId[targetListId]
                         .Select(v => new Transporter(
-                            v.Vehicle.ObjectReference.PathName.Split("_")[^1],
+                            v.Vehicle.ObjectReference.PathName.Short(),
                             "Truck",
                             shortId,
-                            unloadStationId.Split("_")[^1],
+                            unloadStationId.Short(),
                             otherStations))];
                 }
 

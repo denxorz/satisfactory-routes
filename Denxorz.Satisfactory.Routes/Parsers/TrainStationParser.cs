@@ -74,7 +74,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .Select(t =>
             {
                 var id = t.ObjectReference.PathName;
-                var idShort = id.Split("_")[^1];
+                var idShort = id.Short();
                 var stationIdentifier = trainStationIdentifiersByStationId[id];
                 var platforms = GetAllConnectedPlatforms(id, trainStationConnectionToPlatformsByStationId);
                 var inventories = platforms.Count > 0 ? platforms.Select(p => objectsByName[p!.InventoryId]).ToList() : [];
@@ -93,12 +93,12 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                     [.. trainTimeTablesWithStops
                         .Where(ttt => ttt.StopStationIds.Contains(stationIdentifier.Id))
                         .Select(ttt => {
-                            var all = ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).Where(ssi => ssi != id).Select(ssi => ssi.Split("_")[^1]).ToList();
+                            var all = ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).Where(ssi => ssi != id).Select(ssi => ssi.Short()).ToList();
                             var from = isUnload ? all[0] : idShort;
                             var to = isUnload ? idShort : all[0];
                             var others = all.Skip(1).ToList();
                             return new Transporter(
-                                ttt.Id.Split("_")[^1],
+                                ttt.Id.Short(),
                                 trainNameByTimeTableId[ttt.Id] ?? "??",
                                 from,
                                 to,

@@ -49,7 +49,7 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
               .OfType<ActorObject>()
               .Select(o =>
               {
-                  var shortId = o.ObjectReference.PathName.Split("_")[^1];
+                  var shortId = o.ObjectReference.PathName.Short();
 
                   var typeFull = o.TypePath.Replace("/Game/FactoryGame/Buildable/Factory/", null);
                   var type = typeFull[..typeFull.IndexOf('/')];

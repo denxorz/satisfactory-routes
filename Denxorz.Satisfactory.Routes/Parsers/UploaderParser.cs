@@ -12,7 +12,7 @@ public class UploaderParser(List<ComponentObject> objects, Dictionary<string, Co
             .OfType<ActorObject>()
             .Select(t =>
             {
-                var shortId = t.ObjectReference.PathName.Split("_")[^1];
+                var shortId = t.ObjectReference.PathName.Short();
                 var inventory = objectsByName[t.Properties.GetObjectPathName("mStorageInventory")];
                 var cargoTypes = inventory.ToCargoTypes();
 
