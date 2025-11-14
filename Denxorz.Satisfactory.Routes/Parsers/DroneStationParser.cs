@@ -1,8 +1,6 @@
 ﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
-using System.Linq;
-using System.Text.Json;
 
 namespace Denxorz.Satisfactory.Routes.Parsers;
 
@@ -20,7 +18,7 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
             .ToDictionary(o => o.Key, o => o.ToList());
 
         // Drone Station Identifier, by StationId. I.e. Persistent_Level:PersistentLevel.Build_DroneStation_C_2144148257
-        var droneStationIdentifiers = droneRelatedObjectsByType["/Script/FactoryGame.FGDroneStationInfo"];
+        var droneStationIdentifiers = droneRelatedObjectsByType.GetGroup("/Script/FactoryGame.FGDroneStationInfo");
         var droneStationIdentifiersByStationId = droneStationIdentifiers
             .Select(t => new
             {
@@ -34,7 +32,7 @@ public class DroneStationParser(List<ComponentObject> objects, Dictionary<string
         var droneStationIdentifiersByStationIdentifier = droneStationIdentifiersByStationId.Values.ToDictionary(t => t.Id, t => t);
 
         // Drone Station, by StationId. I.e. Persistent_Level:PersistentLevel.Build_DroneStation_C_2144148257
-        var droneStations = droneRelatedObjectsByType["/Game/FactoryGame/Buildable/Factory/DroneStation/Build_DroneStation.Build_DroneStation_C"];
+        var droneStations = droneRelatedObjectsByType.GetGroup("/Game/FactoryGame/Buildable/Factory/DroneStation/Build_DroneStation.Build_DroneStation_C");
         return droneStations
             .OfType<ActorObject>()
             .Select(t =>

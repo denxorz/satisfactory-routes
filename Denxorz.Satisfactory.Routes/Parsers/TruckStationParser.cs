@@ -21,7 +21,7 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
             .GroupBy(o => o.TypePath)
             .ToDictionary(o => o.Key, o => o.ToList());
 
-        var vehiclesByTargetListId = truckRelatedObjectsByType["/Script/FactoryGame.FGWheeledVehicleInfo"]
+        var vehiclesByTargetListId = truckRelatedObjectsByType.GetGroup("/Script/FactoryGame.FGWheeledVehicleInfo")
             .OfType<ActorObject>()
             .Where(t => !string.IsNullOrWhiteSpace(t.ParentObjectName))
             .Select(t => new
@@ -40,7 +40,7 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
             .GroupBy(t => t.TargetListId)
             .ToDictionary(t => t.Key, t => t.ToList());
 
-        var simpleTruckStations = truckRelatedObjectsByType["/Game/FactoryGame/Buildable/Factory/TruckStation/Build_TruckStation.Build_TruckStation_C"]
+        var simpleTruckStations = truckRelatedObjectsByType.GetGroup("/Game/FactoryGame/Buildable/Factory/TruckStation/Build_TruckStation.Build_TruckStation_C")
             .OfType<ActorObject>()
             .Select(t =>
             {
@@ -66,7 +66,7 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
         var stationIdsByPosition = simpleTruckStations
             .ToDictionary(s => (s.Position.X, s.Position.Y), s => s.Id);
 
-        var targetListIdByStationId = truckRelatedObjectsByType["/Game/FactoryGame/Buildable/Vehicle/BP_VehicleTargetPoint.BP_VehicleTargetPoint_C"]
+        var targetListIdByStationId = truckRelatedObjectsByType.GetGroup("/Game/FactoryGame/Buildable/Vehicle/BP_VehicleTargetPoint.BP_VehicleTargetPoint_C")
             .Where(p => p.Properties.Any(pp => pp.Name == "mWaitTime"))
             .OfType<ActorObject>()
             .Select(p => new { StationId = stationIdsByPosition.TryGetValue((p.Position.X, p.Position.Y), out var tmp) ? tmp : null, p.ParentObjectName })
@@ -86,7 +86,7 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
             .ToDictionary(t => t.Key, t => t.First().StationId);
 
         // Truck Station Identifier, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TruckStation_C_2144148257
-        var truckStationIdentifiers = truckRelatedObjectsByType["/Script/FactoryGame.FGDockingStationInfo"];
+        var truckStationIdentifiers = truckRelatedObjectsByType.GetGroup("/Script/FactoryGame.FGDockingStationInfo");
         var truckStationIdentifiersByStationId = truckStationIdentifiers
             .Select(t => new
             {
@@ -105,18 +105,24 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
                 var inventory = objectsByName[(t.Raw.Properties.FirstOrDefault(p => p.Name == "mInventory") as ObjectProperty)?.Value.PathName ?? "??"];
                 var cargoTypes = inventory.ToCargoTypes();
                 var cargo = stationIdentifier.Name.GetFlowPerMinuteFromName(cargoTypes);
-                var targetListId = targetListIdByStationId[t.Id];
-                var unloadStationId = unloadStationIdByTargetListId.TryGetValue(targetListId, out var tmp) ? tmp : "??";
-                var otherStations = stationIdsByTargetListId[targetListId].Where(s => s != t.Id && s != unloadStationId).Select(s => s.Split("_")[^1]).ToList();
 
-                var vehicles = t.IsUnload ? [] : vehiclesByTargetListId[targetListId]
-                    .Select(v => new Transporter(
-                        v.Vehicle.ObjectReference.PathName.Split("_")[^1],
-                        "Truck",
-                        shortId,
-                        unloadStationId.Split("_")[^1],
-                        otherStations))
-                    .ToList();
+                var vehicles = new List<Transporter>();
+
+                if (targetListIdByStationId.TryGetValue(t.Id, out var targetListId))
+                {
+                    var unloadStationId = unloadStationIdByTargetListId.TryGetValue(targetListId, out var tmp) ? tmp : "??";
+                    var otherStations = stationIdsByTargetListId[targetListId].Where(s => s != t.Id && s != unloadStationId).Select(s => s.Split("_")[^1]).ToList();
+
+                    vehicles = t.IsUnload
+                    ? []
+                    : [.. vehiclesByTargetListId[targetListId]
+                        .Select(v => new Transporter(
+                            v.Vehicle.ObjectReference.PathName.Split("_")[^1],
+                            "Truck",
+                            shortId,
+                            unloadStationId.Split("_")[^1],
+                            otherStations))];
+                }
 
                 return new Station(
                     shortId,

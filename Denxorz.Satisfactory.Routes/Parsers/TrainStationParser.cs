@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Denxorz.Satisfactory.Routes.Types;
+﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
 using SatisfactorySaveNet.Abstracts.Model.Properties;
 
@@ -19,7 +18,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .ToDictionary(o => o.Key, o => o.ToList());
 
         // Train Timetable, by PathName. I.e. Persistent_Level:PersistentLevel.FGRailroadTimeTable_2146071228
-        var trainTimeTables = trainRelatedObjectsByType["/Script/FactoryGame.FGRailroadTimeTable"];
+        var trainTimeTables = trainRelatedObjectsByType.GetGroup("/Script/FactoryGame.FGRailroadTimeTable");
         var trainTimeTablesWithStops = trainTimeTables
             .Select(t => new
             {
@@ -28,13 +27,13 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             })
             .ToList();
 
-        var trainNameByTimeTableId = trainRelatedObjectsByType["/Game/FactoryGame/Buildable/Vehicle/Train/-Shared/BP_Train.BP_Train_C"]
+        var trainNameByTimeTableId = trainRelatedObjectsByType.GetGroup("/Game/FactoryGame/Buildable/Vehicle/Train/-Shared/BP_Train.BP_Train_C")
             .ToDictionary(
                 t => t.Properties.FirstOrDefault(p => p.Name == "TimeTable") is ObjectProperty op ? op.Value.PathName : "??", 
                 t => t.Properties.FirstOrDefault(p => p.Name == "mTrainName") is TextProperty tp ? tp.Value : null);
 
         // Train Station Identifier, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
-        var trainStationIdentifiers = trainRelatedObjectsByType["/Script/FactoryGame.FGTrainStationIdentifier"];
+        var trainStationIdentifiers = trainRelatedObjectsByType.GetGroup("/Script/FactoryGame.FGTrainStationIdentifier");
         var trainStationIdentifiersByStationId = trainStationIdentifiers
             .Select(t => new 
             {
@@ -47,7 +46,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
         var trainStationIdsByStationIdentifierId = trainStationIdentifiersByStationId.Values.ToDictionary(t => t.Id, t => t.TrainStationId);
 
         // Train Station Docking Platform, by DockingStationId. I.e. Persistent_Level:PersistentLevel.Build_TrainDockingStation_C_2147007379
-        var trainStationDockings = trainRelatedObjectsByType["/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainDockingStation.Build_TrainDockingStation_C"];
+        var trainStationDockings = trainRelatedObjectsByType.GetGroup("/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainDockingStation.Build_TrainDockingStation_C");
         var trainStationDockingsByStationId = trainStationDockings
             .OfType<ActorObject>()
             .Select(t => new Platform(
@@ -57,7 +56,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .ToDictionary(t => t.Id, t => t);
 
         // Train Station Docking Platform, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
-        var trainStationConnections = trainRelatedObjectsByType["/Script/FactoryGame.FGTrainPlatformConnection"];
+        var trainStationConnections = trainRelatedObjectsByType.GetGroup("/Script/FactoryGame.FGTrainPlatformConnection");
         var trainStationConnectionsByStationId = trainStationConnections.GroupBy(t => t.ParentActorName).ToDictionary(t => t.Key, t => t.ToList());
         var trainStationConnectionToPlatformsByStationId = trainStationConnectionsByStationId
             .ToDictionary(
@@ -69,7 +68,7 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                 .ToList());
 
         // Train Station, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
-        var trainStations = trainRelatedObjectsByType["/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainStation.Build_TrainStation_C"];
+        var trainStations = trainRelatedObjectsByType.GetGroup("/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainStation.Build_TrainStation_C");
         return trainStations
             .OfType<ActorObject>()
             .Select(t =>
