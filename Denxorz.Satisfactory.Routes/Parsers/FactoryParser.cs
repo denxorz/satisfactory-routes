@@ -18,26 +18,25 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
             .Where(o => o.Components.Count > 1)
             .ToList();
 
-        var powerCircuits2 = powerCircuits
-            .SelectMany(o => o.Components.Select(c => new { ObjectReference = string.Join(".", c.Split('.').Take(2)), CircuitIndex = o.CircuitId }))
-            .DistinctBy(o => o.ObjectReference)
+        var powerCircuitsByReference = powerCircuits
+            .SelectMany(o => o.Components.Select(c => new { ObjectReference = c, CircuitIndex = o.CircuitId }))
             .ToDictionary(o => o.ObjectReference, o => o.CircuitIndex);
 
-        var powerCircuits3 = powerCircuits
-            .SelectMany(o => o.Components.Select(c => new { ObjectReference = c, CircuitIndex = o.CircuitId }))
+        var powerCircuitsByShortenendReference = powerCircuitsByReference
+            .Select(o => new { ObjectReference = string.Join(".", o.Key.Split('.').Take(2)), CircuitIndex = o.Value })
+            .DistinctBy(o => o.ObjectReference)
             .ToDictionary(o => o.ObjectReference, o => o.CircuitIndex);
 
         var switches = objects
               .Where(o => o.TypePath.EndsWith("PowerSwitch_C"))
-              .Where(o => (o.Properties.FirstOrDefault(p => p.Name == "mIsSwitchOn") as BoolProperty)?.Value == 1)
+              .Where(o => o.Properties.FirstOrDefault(p => p.Name == "mIsSwitchOn") is BoolProperty { Value: 1 })
               .OfType<ActorObject>()
               .ToList();
 
         var switchGroups = switches
             .Select(o => (
-                powerCircuits3.TryGetValue(o.Components.First().PathName, out var circuit) ? circuit : -1,
-                powerCircuits3.TryGetValue(o.Components.Skip(1).First().PathName, out var circuit2) ? circuit2 : -1,
-                (o.Properties.FirstOrDefault(p => p.Name == "mBuildingTag") as StrProperty)?.Value ?? ""
+                powerCircuitsByReference.TryGetValue(o.Components.First().PathName, out var circuit) ? circuit : -1,
+                powerCircuitsByReference.TryGetValue(o.Components.Skip(1).First().PathName, out var circuit2) ? circuit2 : -1
             ))
             .ToList();
 
@@ -59,7 +58,7 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   var percentageProducing = Math.Floor(((o.Properties.FirstOrDefault(p => p.Name == "mCurrentProductivityMeasurementProduceDuration") as FloatProperty)?.Value ?? 0) /
                     ((o.Properties.FirstOrDefault(p => p.Name == "mCurrentProductivityMeasurementDuration") as FloatProperty)?.Value ?? 100) * 100);
 
-                  var subCircuitId = powerCircuits2.TryGetValue(o.ObjectReference.PathName, out var circuit) ? circuit : -1;
+                  var subCircuitId = powerCircuitsByShortenendReference.TryGetValue(o.ObjectReference.PathName, out var circuit) ? circuit : -1;
 
                   return new Factory(
                       shortId,
@@ -74,13 +73,13 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
     }
 
 
-    public static List<List<int>> GroupConnectedIds(List<(int, int, string)> pairs)
+    public static List<List<int>> GroupConnectedIds(List<(int, int)> pairs)
     {
         var groups = new List<List<int>>();
         var processed = new HashSet<int>();
 
         var graph = new Dictionary<int, HashSet<int>>();
-        foreach (var (id1, id2, name) in pairs.Where(p => p.Item1 >= 0 && p.Item2 >= 0))
+        foreach (var (id1, id2) in pairs.Where(p => p.Item1 >= 0 && p.Item2 >= 0))
         {
             if (!graph.TryGetValue(id1, out var value))
             {
