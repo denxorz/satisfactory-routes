@@ -3,7 +3,7 @@
 public record Factory(
     string Id,
     string Type,
-    int PercentageProducing,
+    int? PercentageProducing,
     int MainPowerCircuitId,
     int SubPowerCircuitId,
     float X,

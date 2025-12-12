@@ -44,7 +44,12 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
         return objects
               .GroupBy(o => o.TypePath)
               .Where(o => o.First().TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/"))
-              .Where(o => o.First().Properties.Any(p => p.Name == "mCurrentProductivityMeasurementDuration"))
+              .Where(o => !o.First().TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/Storage"))
+              .Where(o => !o.First().TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/Holiday"))
+              .Where(o => o.First().TypePath != "/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainDockingStation.Build_TrainDockingStation_C")
+              .Where(o => o.First().TypePath != "/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainPlatformEmpty.Build_TrainPlatformEmpty_C")
+              .Where(o => o.First().Properties.Any(p => p.Name == "mPowerInfo"))
+              .Where(o => !o.First().Properties.Any(p => p.Name == "mFluidBox"))
               .SelectMany(o => o)
               .OfType<ActorObject>()
               .Select(o =>
@@ -54,15 +59,20 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   var typeFull = o.TypePath.Replace("/Game/FactoryGame/Buildable/Factory/", null);
                   var type = typeFull[..typeFull.IndexOf('/')];
 
-                  var percentageProducing = Math.Floor((o.Properties.GetFloat("mCurrentProductivityMeasurementProduceDuration") ?? 0) /
-                    (o.Properties.GetFloat("mCurrentProductivityMeasurementDuration") ?? 100) * 100);
+                  int? percentageProducing = null;
+                  float? currentProductivityMeasurementDuration = o.Properties.GetFloat("mCurrentProductivityMeasurementProduceDuration");
+                  if (currentProductivityMeasurementDuration is not null)
+                  {
+                      percentageProducing = (int)Math.Floor(currentProductivityMeasurementDuration.Value /
+                                                  (o.Properties.GetFloat("mCurrentProductivityMeasurementDuration") ?? 100) * 100);
+                  }
 
                   var subCircuitId = powerCircuitsByShortenendReference.TryGetValue(o.ObjectReference.PathName, out var circuit) ? circuit : -1;
 
                   return new Factory(
                       id,
                       type,
-                      (int)percentageProducing,
+                      percentageProducing,
                       mainPowerCircuits.FindIndex(c => c.Contains(subCircuitId)),
                       subCircuitId,
                       o.Position.X,
