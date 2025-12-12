@@ -5,8 +5,8 @@ public sealed class FactoryTests
 {
     [TestMethod]
     public void GetsAllFactories()
-    {
-        Assert.HasCount(2163, StationTests.ClassUnderTest.Factories);
+    { 
+        Assert.HasCount(3274, StationTests.ClassUnderTest.Factories);
     }
 
     [TestMethod]
@@ -18,26 +18,26 @@ public sealed class FactoryTests
     [TestMethod]
     public void GetsIds()
     {
-        Assert.AreEqual("2147367273", StationTests.ClassUnderTest.Factories[0].Id);
+        Assert.AreEqual("2147367273", StationTests.ClassUnderTest.Factories[1].Id);
     }
 
     [TestMethod]
     public void GetsType()
     {
-        Assert.AreEqual("GeneratorCoal", StationTests.ClassUnderTest.Factories[0].Type);
+        Assert.AreEqual("GeneratorCoal", StationTests.ClassUnderTest.Factories[1].Type);
     }
 
     [TestMethod]
     public void GetsPercentageProducing()
     {
-        Assert.AreEqual(27, StationTests.ClassUnderTest.Factories[61].PercentageProducing);
-        Assert.AreEqual(1939, StationTests.ClassUnderTest.Factories.Count(f => f.PercentageProducing > 0));
+        Assert.AreEqual(41, StationTests.ClassUnderTest.Factories[61].PercentageProducing);
+        Assert.AreEqual(1941, StationTests.ClassUnderTest.Factories.Count(f => f.PercentageProducing > 0));
     }
 
     [TestMethod]
     public void GetsPowerCircuitId()
     {
         Assert.AreEqual(0, StationTests.ClassUnderTest.Factories[61].MainPowerCircuitId);
-        Assert.AreEqual(110, StationTests.ClassUnderTest.Factories[61].SubPowerCircuitId);
+        Assert.AreEqual(6, StationTests.ClassUnderTest.Factories[61].SubPowerCircuitId);
     }
 }
