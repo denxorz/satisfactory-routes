@@ -3,6 +3,12 @@
 [TestClass]
 public sealed class UploaderTests
 {
+    [ClassInitialize]
+    public static void ClassInitialize(TestContext _)
+    {
+        StationTests.LoadBigSave();
+    }
+
     [TestMethod]
     public void GetsAllUploaders()
     {

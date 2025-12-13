@@ -12,6 +12,7 @@ public sealed class DroneStationTests
     [ClassInitialize]
     public static void ClassInitialize(TestContext _)
     {
+        StationTests.LoadBigSave();
         egelStations = [.. StationTests.DroneStations.Where(s => s.ShortName == "Egel")];
     }
 

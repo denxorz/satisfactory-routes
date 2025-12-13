@@ -12,6 +12,7 @@ public sealed class TrainStationTests
     [ClassInitialize]
     public static void ClassInitialize(TestContext _)
     {
+        StationTests.LoadBigSave();
         northStations = [.. StationTests.TrainStations.Where(s => s.ShortName == "The North")];
     }
 

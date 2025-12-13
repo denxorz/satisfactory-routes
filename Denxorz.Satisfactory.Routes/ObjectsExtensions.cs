@@ -7,7 +7,10 @@ namespace Denxorz.Satisfactory.Routes;
 public static class ObjectsExtensions
 {
     public static SaveDetails Parse(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
-        => new(objects.ParseStations(), objects.ParseUploaders(), objects.ParseFactories());
+    {
+        var powerCircuits = objects.ParsePowerCircuits();
+        return new(objects.ParseStations(), objects.ParseUploaders(), objects.ParseFactories(powerCircuits), powerCircuits);
+    }
 
     public static List<Station> ParseStations(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
         => [.. objects.ParseTrainStations(), .. objects.ParseDroneStations(), .. objects.ParseTruckStations()];
@@ -24,8 +27,10 @@ public static class ObjectsExtensions
     public static List<Uploader> ParseUploaders(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
         => [.. new UploaderParser(objects.Objects, objects.ObjectsByName).Parse()];
 
-    public static List<Factory> ParseFactories(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
-        => [.. new FactoryParser(objects.Objects, objects.ObjectsByName).Parse()];
+    public static List<Factory> ParseFactories(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects, List<PowerCircuit> powerCircuits)
+        => [.. new FactoryParser(objects.Objects, objects.ObjectsByName).Parse(powerCircuits)];
 
+    public static List<PowerCircuit> ParsePowerCircuits(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
+        => [.. new PowerCircuitParser(objects.Objects, objects.ObjectsByName).Parse()];
 }
 

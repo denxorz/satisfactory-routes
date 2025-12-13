@@ -4,7 +4,11 @@ using SatisfactorySaveNet.Abstracts.Model;
 
 namespace Denxorz.Satisfactory.Routes;
 
-public record SaveDetails(List<Station> Stations, List<Uploader> Uploaders, List<Factory> Factories)
+public record SaveDetails(
+    List<Station> Stations,
+    List<Uploader> Uploaders, 
+    List<Factory> Factories,
+    List<PowerCircuit> PowerCircuits)
 {
     public static SaveDetails LoadFromStream(Stream stream)
     {

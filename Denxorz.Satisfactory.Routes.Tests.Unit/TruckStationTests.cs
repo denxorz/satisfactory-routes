@@ -12,6 +12,7 @@ public sealed class TruckStationTests
     [ClassInitialize]
     public static void ClassInitialize(TestContext _)
     {
+        StationTests.LoadBigSave();
         templeStations = [.. StationTests.TruckStations.Where(s => s.ShortName == "Temple")];
     }
 
