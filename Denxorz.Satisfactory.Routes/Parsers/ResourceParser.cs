@@ -15,7 +15,7 @@ public class ResourceParser(List<ComponentObject> objects, Dictionary<string, Co
              {
                  var miner = minersByResource.TryGetValue(r.Id, out var m) ? m : null;
 
-                 int percentageProducing = 0;
+                 float percentageProducing = 0;
                  int minerMultiplier = 1;
                  float overclockMultiplier = 1;
 
@@ -24,8 +24,8 @@ public class ResourceParser(List<ComponentObject> objects, Dictionary<string, Co
                      float? currentProductivityMeasurementDuration = miner.Properties.GetFloat("mCurrentProductivityMeasurementProduceDuration");
                      if (currentProductivityMeasurementDuration is not null)
                      {
-                         percentageProducing = (int)Math.Floor(currentProductivityMeasurementDuration.Value /
-                                                     (miner.Properties.GetFloat("mCurrentProductivityMeasurementDuration") ?? 100));
+                         percentageProducing = currentProductivityMeasurementDuration.Value /
+                                                     (miner.Properties.GetFloat("mCurrentProductivityMeasurementDuration") ?? 100);
                      }
 
                      minerMultiplier = miner.TypePath.EndsWith("Mk3_C") ? 4 : miner.TypePath.EndsWith("Mk2_C") ? 2 : 1;
