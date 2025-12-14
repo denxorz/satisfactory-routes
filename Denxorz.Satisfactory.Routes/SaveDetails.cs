@@ -8,7 +8,8 @@ public record SaveDetails(
     List<Station> Stations,
     List<Uploader> Uploaders, 
     List<Factory> Factories,
-    List<PowerCircuit> PowerCircuits)
+    List<PowerCircuit> PowerCircuits,
+    List<Resource> Resources)
 {
     public static SaveDetails LoadFromStream(Stream stream)
     {

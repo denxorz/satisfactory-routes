@@ -13,6 +13,7 @@ A .NET library for parsing and analyzing Satisfactory save files to extract rout
 - Extract flow/minute based on naming convention (see)
 - Extract factory type
 - Extract Power circuits
+- Extracts Resources and the amount they are being mined
 
 ## Installation
 
@@ -87,6 +88,7 @@ The current parser assumes some things. If you need other specs, let me know in 
 
 ## Versions & Release Notes
 
+- version 1.6: Add Resources
 - version 1.5: Add Power circuits
 - version 1.4: Factories now include factories with a unknown production percentage (FactoryPercentageProducing int -> int?)
 - version 1.3: Handle more edge cases + Add .NET 10 support + Seperate load methods

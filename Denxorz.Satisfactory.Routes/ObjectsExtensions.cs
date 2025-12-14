@@ -9,7 +9,7 @@ public static class ObjectsExtensions
     public static SaveDetails Parse(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
     {
         var powerCircuits = objects.ParsePowerCircuits();
-        return new(objects.ParseStations(), objects.ParseUploaders(), objects.ParseFactories(powerCircuits), powerCircuits);
+        return new(objects.ParseStations(), objects.ParseUploaders(), objects.ParseFactories(powerCircuits), powerCircuits, objects.ParseResources());
     }
 
     public static List<Station> ParseStations(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
@@ -32,5 +32,8 @@ public static class ObjectsExtensions
 
     public static List<PowerCircuit> ParsePowerCircuits(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
         => [.. new PowerCircuitParser(objects.Objects, objects.ObjectsByName).Parse()];
+
+    public static List<Resource> ParseResources(this (List<ComponentObject> Objects, Dictionary<string, ComponentObject> ObjectsByName) objects)
+    => [.. new ResourceParser(objects.Objects, objects.ObjectsByName).Parse()];
 }
 
