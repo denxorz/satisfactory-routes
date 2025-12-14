@@ -34,13 +34,13 @@ jobs:
           fi
 
       - name: Restore dependencies
-        run: dotnet restore Denxorz.Satisfactory.Routes.sln
+        run: dotnet restore Denxorz.Satisfactory.Routes.slnx
 
       - name: Build
-        run: dotnet build Denxorz.Satisfactory.Routes.sln --configuration Release --no-restore
+        run: dotnet build Denxorz.Satisfactory.Routes.slnx --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test Denxorz.Satisfactory.Routes.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test Denxorz.Satisfactory.Routes.slnx --configuration Release --no-build --verbosity normal
 
       - name: Pack with version
         run: |

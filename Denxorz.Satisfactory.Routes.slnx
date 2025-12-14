@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Denxorz.Satisfactory.Routes.Tests.Unit/Denxorz.Satisfactory.Routes.Tests.Unit.csproj" />
+  <Project Path="Denxorz.Satisfactory.Routes/Denxorz.Satisfactory.Routes.csproj" />
+</Solution>

@@ -22,13 +22,13 @@ jobs:
             9.0.x
 
       - name: Restore dependencies
-        run: dotnet restore Denxorz.Satisfactory.Routes.sln
+        run: dotnet restore Denxorz.Satisfactory.Routes.slnx
 
       - name: Build
-        run: dotnet build Denxorz.Satisfactory.Routes.sln --configuration Release --no-restore
+        run: dotnet build Denxorz.Satisfactory.Routes.slnx --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test Denxorz.Satisfactory.Routes.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+        run: dotnet test Denxorz.Satisfactory.Routes.slnx --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
