@@ -11,6 +11,8 @@ A .NET library for parsing and analyzing Satisfactory save files to extract rout
 - Extract the stations for trains, drones, and trucks
 - Extract the routes between stations
 - Extract flow/minute based on naming convention (see)
+- Extract factory type
+- Extract Power circuits
 
 ## Installation
 
@@ -72,6 +74,7 @@ The current parser assumes some things. If you need other specs, let me know in 
 - Stations are named based on convention above
 - Trains only unload at one station
 - Trucks only unload at one station
+- A power circuit is named the same as the switch if it is attached to the B side
 
 ## Tools and Products Used
 
@@ -84,6 +87,8 @@ The current parser assumes some things. If you need other specs, let me know in 
 
 ## Versions & Release Notes
 
+- version 1.5: Add Power circuits
+- version 1.4: Factories now include factories with a unknown production percentage (FactoryPercentageProducing int -> int?)
 - version 1.3: Handle more edge cases + Add .NET 10 support + Seperate load methods
 - version 1.2: Add Factory stats
 - version 1.1: Add Uploaders
