@@ -12,7 +12,7 @@ public sealed class FactoryTests
     [TestMethod]
     public void GetsAllFactories()
     { 
-        Assert.HasCount(3274, StationTests.ClassUnderTest.Factories);
+        Assert.HasCount(3088, StationTests.ClassUnderTest.Factories);
     }
 
     [TestMethod]

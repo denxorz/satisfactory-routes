@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Denxorz.Satisfactory.Routes.Types;
+﻿using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
 
 namespace Denxorz.Satisfactory.Routes.Parsers;
@@ -15,10 +14,21 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
         return objects
               .GroupBy(o => o.TypePath)
               .Where(o => o.First().TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/"))
-              .Where(o => !o.First().TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/Storage"))
-              .Where(o => !o.First().TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/Holiday"))
-              .Where(o => o.First().TypePath != "/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainDockingStation.Build_TrainDockingStation_C")
-              .Where(o => o.First().TypePath != "/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainPlatformEmpty.Build_TrainPlatformEmpty_C")
+              .Where(o =>
+              {
+                  var type = o.First().TypePath;
+                  return type.StartsWith("/Game/FactoryGame/Buildable/Factory/")
+                      && !type.StartsWith("/Game/FactoryGame/Buildable/Factory/Storage")
+                      && !type.StartsWith("/Game/FactoryGame/Buildable/Factory/Holiday")
+                      && type != "/Game/FactoryGame/Buildable/Factory/CentralStorage/Build_CentralStorage.Build_CentralStorage_C"
+                      && type != "/Game/FactoryGame/Buildable/Factory/TradingPost/Build_TradingPost.Build_TradingPost_C"
+                      && type != "/Game/FactoryGame/Buildable/Factory/ResourceSinkShop/Build_ResourceSinkShop.Build_ResourceSinkShop_C"
+                      && type != "/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainPlatformEmpty_02.Build_TrainPlatformEmpty_02_C"
+                      && type != "/Game/FactoryGame/Buildable/Factory/PipeHyperTJunction/Build_HypertubeTJunction.Build_HypertubeTJunction_C"
+                      && type != "/Game/FactoryGame/Buildable/Factory/PipeHyperJunction/Build_HyperTubeJunction.Build_HyperTubeJunction_C"
+                      && type != "/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainDockingStation.Build_TrainDockingStation_C"
+                      && type != "/Game/FactoryGame/Buildable/Factory/Train/Station/Build_TrainPlatformEmpty.Build_TrainPlatformEmpty_C";
+              })
               .Where(o => o.First().Properties.Any(p => p.Name == "mPowerInfo"))
               .Where(o => !o.First().Properties.Any(p => p.Name == "mFluidBox"))
               .SelectMany(o => o)
@@ -29,6 +39,11 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
 
                   var typeFull = o.TypePath.Replace("/Game/FactoryGame/Buildable/Factory/", null);
                   var type = typeFull[..typeFull.IndexOf('/')];
+
+                  if (type == "Train")
+                  {
+                      type = "TrainStation";
+                  }
 
                   int? percentageProducing = null;
                   float? currentProductivityMeasurementDuration = o.Properties.GetFloat("mCurrentProductivityMeasurementProduceDuration");
