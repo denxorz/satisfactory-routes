@@ -28,9 +28,10 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
             .ToList();
 
         var trainNameByTimeTableId = trainRelatedObjectsByType.GetGroup("/Game/FactoryGame/Buildable/Vehicle/Train/-Shared/BP_Train.BP_Train_C")
+            .GroupBy(t => t.Properties.GetObjectPathName("TimeTable"))
             .ToDictionary(
-                t => t.Properties.GetObjectPathName("TimeTable"), 
-                t => t.Properties.GetText("mTrainName"));
+                t => t.Key, 
+                t => t.First().Properties.GetText("mTrainName"));
 
         // Train Station Identifier, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TrainStation_C_2147007670
         var trainStationIdentifiers = trainRelatedObjectsByType.GetGroup("/Script/FactoryGame.FGTrainStationIdentifier");

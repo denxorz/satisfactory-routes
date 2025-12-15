@@ -7,8 +7,13 @@ public class ResourceParser(List<ComponentObject> objects, Dictionary<string, Co
 {
     public IEnumerable<Resource> Parse()
     {
-        var miners = objects.Where(o => o.TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/Miner")).ToList();
-        var minersByResource = miners.ToDictionary(m => m.Properties.GetObjectPathName("mExtractableResource"), m => m);
+        var miners = objects
+            .Where(o => o.TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/Miner"))
+            .ToList();
+
+        var minersByResource = miners
+            .GroupBy(m => m.Properties.GetObjectPathName("mExtractableResource"))
+            .ToDictionary(m => m.Key, m => m.First());
 
         return Resources.All
              .Select(r =>
