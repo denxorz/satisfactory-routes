@@ -95,14 +95,14 @@ public class TrainStationParser(List<ComponentObject> objects, Dictionary<string
                         .Where(ttt => ttt.StopStationIds.Contains(stationIdentifier.Id))
                         .Select(ttt => {
                             var all = ttt.StopStationIds.Select(ssi => trainStationIdsByStationIdentifierId[ssi]).Where(ssi => ssi != pathName).Select(ssi => ssi.ToId()).ToList();
-                            var from = isUnload ? all[0] : id;
-                            var to = isUnload ? id : all[0];
+                            var from = isUnload ? all.FirstOrDefault() : id;
+                            var to = isUnload ? id : all.FirstOrDefault();
                             var others = all.Skip(1).ToList();
                             return new Transporter(
                                 ttt.Id.ToId(),
                                 trainNameByTimeTableId[ttt.Id] ?? "??",
-                                from,
-                                to,
+                                from ?? "??",
+                                to ?? "??",
                                 others); 
                         })],
                     t.Position.X,
