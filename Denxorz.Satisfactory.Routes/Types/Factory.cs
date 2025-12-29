@@ -8,7 +8,7 @@ public record Factory(
     int SubPowerCircuitId,
     float X,
     float Y,
-    float Potential,
+    float? ClockSpeed,
     bool HasSloop,
     string? RecipeClass,
     string? Recipe,

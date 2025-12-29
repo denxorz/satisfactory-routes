@@ -71,6 +71,8 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   var recipeFullName = o.Properties.GetObjectPathName("mCurrentRecipe");
                   recipes.TryGetValue(recipeFullName.Split('.')[^1], out var recipe);
 
+                  var clockSpeed = o.Properties.GetFloat("mPendingPotential") * 100 ?? DefaultClockSpeed(percentageProducing);
+
                   return new Factory(
                       id,
                       type,
@@ -79,7 +81,7 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                       circuit?.Id ?? -1,
                       o.Position.X,
                       o.Position.Y,
-                      (float)Math.Round(o.Properties.GetFloat("mPendingPotential") * 100 ?? 100, 3),
+                      clockSpeed is not null ? (float)Math.Round(clockSpeed.Value, 3) : null,
                       (int?)o.Properties.GetFloat("mPendingProductionBoost") == 2,
                       recipe?.ClassName,
                       recipe?.Name,
@@ -88,6 +90,9 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   );
               });
     }
+
+    private static bool HasClockSpeed(int? percentageProducing) => percentageProducing is not null;
+    private static float? DefaultClockSpeed(int? percentageProducing) => HasClockSpeed(percentageProducing) ? 100 : null;
 }
 
 internal record TmpPowerCircuit(string PathName, string CircuitAPathName, string CircuitBPathName, int? Priority, bool IsSwitchedOn, string? Name);
