@@ -11,7 +11,7 @@ public sealed class FactoryTests
 
     [TestMethod]
     public void GetsAllFactories()
-    { 
+    {
         Assert.HasCount(3088, StationTests.ClassUnderTest.Factories);
     }
 
@@ -45,5 +45,39 @@ public sealed class FactoryTests
     {
         Assert.AreEqual(0, StationTests.ClassUnderTest.Factories[61].MainPowerCircuitId);
         Assert.AreEqual(6, StationTests.ClassUnderTest.Factories[61].SubPowerCircuitId);
+    }
+
+    [TestMethod]
+    public void DetectSloop()
+    {
+        Assert.IsTrue(StationTests.ClassUnderTest.Factories[433].HasSloop);
+        Assert.IsFalse(StationTests.ClassUnderTest.Factories[434].HasSloop);
+    }
+
+    [TestMethod]
+    public void DetectShard()
+    {
+        Assert.AreEqual(100, StationTests.ClassUnderTest.Factories[24].Potential, 0.1);
+        Assert.AreEqual(75, StationTests.ClassUnderTest.Factories[37].Potential, 0.1);
+        Assert.AreEqual(250, StationTests.ClassUnderTest.Factories[34].Potential, 0.1);
+    }
+
+    [TestMethod]
+    public void GetsRecipe()
+    {
+        Assert.AreEqual("Recipe_SuperpositionOscillator_C", StationTests.ClassUnderTest.Factories[3004].RecipeClass);
+        Assert.AreEqual("Superposition Oscillator", StationTests.ClassUnderTest.Factories[3004].Recipe);
+        Assert.AreEqual("DarkMatter", StationTests.ClassUnderTest.Factories[3004].Input[0].Type);
+        Assert.AreEqual(6, (float)StationTests.ClassUnderTest.Factories[3004].Input[0].FlowPerMinute!, 0.1);
+        Assert.AreEqual("CrystalOscillator", StationTests.ClassUnderTest.Factories[3004].Input[1].Type);
+        Assert.AreEqual(1, (float)StationTests.ClassUnderTest.Factories[3004].Input[1].FlowPerMinute!, 0.1);
+        Assert.AreEqual("AluminumPlate", StationTests.ClassUnderTest.Factories[3004].Input[2].Type);
+        Assert.AreEqual(9, (float)StationTests.ClassUnderTest.Factories[3004].Input[2].FlowPerMinute!, 0.1);
+        Assert.AreEqual("QuantumEnergy", StationTests.ClassUnderTest.Factories[3004].Input[3].Type);
+        Assert.AreEqual(25, (float)StationTests.ClassUnderTest.Factories[3004].Input[3].FlowPerMinute!, 0.1);
+        Assert.AreEqual("QuantumOscillator", StationTests.ClassUnderTest.Factories[3004].Output[0].Type);
+        Assert.AreEqual(1, (float)StationTests.ClassUnderTest.Factories[3004].Output[0].FlowPerMinute!, 0.1);
+        Assert.AreEqual("DarkEnergy", StationTests.ClassUnderTest.Factories[3004].Output[1].Type);
+        Assert.AreEqual(25, (float)StationTests.ClassUnderTest.Factories[3004].Output[1].FlowPerMinute!, 0.1);
     }
 }

@@ -1,12 +1,29 @@
-﻿using Denxorz.Satisfactory.Routes.Types;
+﻿using System.Text.Json;
+using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
 
 namespace Denxorz.Satisfactory.Routes.Parsers;
 
 public class FactoryParser(List<ComponentObject> objects, Dictionary<string, ComponentObject> objectsByName)
 {
+    private static Dictionary<string, Recipe> LoadData()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "data.json");
+        var json = File.ReadAllText(path);
+
+        var opts = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return (JsonSerializer.Deserialize<Dictionary<string, List<Recipe>>>(json, opts) ?? [])
+            .ToDictionary(r => r.Key, r => r.Value[0]);
+    }
+
     public IEnumerable<Factory> Parse(List<PowerCircuit> powerCircuits)
     {
+        var recipes = LoadData();
+
         var internalPowerCircuits = powerCircuits
             .OfType<PowerCircuit.InternalPowerCircuit>()
             .ToList();
@@ -55,6 +72,9 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
 
                   var circuit = internalPowerCircuits.FirstOrDefault(pc => pc.AttachedComponents.Contains(o.ObjectReference.PathName));
 
+                  var recipeFullName = o.Properties.GetObjectPathName("mCurrentRecipe");
+                  recipes.TryGetValue(recipeFullName.Split('.')[^1], out var recipe);
+
                   return new Factory(
                       id,
                       type,
@@ -62,7 +82,13 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                       circuit?.ParentCircuitId ?? -1,
                       circuit?.Id ?? -1,
                       o.Position.X,
-                      o.Position.Y
+                      o.Position.Y,
+                      (float)Math.Round(o.Properties.GetFloat("mPendingPotential") * 100 ?? 100, 3),
+                      (int?)o.Properties.GetFloat("mPendingProductionBoost") == 2,
+                      recipe?.ClassName,
+                      recipe?.Name,
+                      [.. recipe?.Ingredients.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount)) ?? []],
+                      [.. recipe?.Products.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount)) ?? []]
                   );
               });
     }

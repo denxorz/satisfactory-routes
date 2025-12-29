@@ -29,18 +29,19 @@ public static class StationExtensions
         var stacks = inventory.Properties.GetTypedArray<ArrayProperties>("mInventoryStacks");
         var inventoryItemStacks = stacks.Select(s => (s.Values.FirstOrDefault() as StructProperty)?.Value as InventoryItem);
         var allStacksWithItems = inventoryItemStacks.Where(item => item?.ExtraProperty is IntProperty { Value: > 0 });
-        var allStacksWithItemsDistinct = allStacksWithItems.Select(s => PrettyItemName(s?.ItemType?.Split(".")[^1] ?? "")).Distinct().Where(s => !string.IsNullOrWhiteSpace(s));
-
-        static string PrettyItemName(string dirtyItemName) => dirtyItemName
-                .Replace("Desc_", null, StringComparison.InvariantCultureIgnoreCase)
-                .Replace("BP_", null, StringComparison.InvariantCultureIgnoreCase)
-                .Replace("ItemDescriptor", null, StringComparison.InvariantCultureIgnoreCase)
-                .Replace("_C", null, StringComparison.InvariantCultureIgnoreCase);
+        var allStacksWithItemsDistinct = allStacksWithItems
+            .Select(s => s?.ItemType?.Split(".")[^1]?.PrettyItemName() ?? "")
+            .Distinct()
+            .Where(s => !string.IsNullOrWhiteSpace(s));
 
         return [.. allStacksWithItemsDistinct];
     }
 
-
+    public static string PrettyItemName(this string dirtyItemName) => dirtyItemName
+                .Replace("Desc_", null, StringComparison.InvariantCultureIgnoreCase)
+                .Replace("BP_", null, StringComparison.InvariantCultureIgnoreCase)
+                .Replace("ItemDescriptor", null, StringComparison.InvariantCultureIgnoreCase)
+                .Replace("_C", null, StringComparison.InvariantCultureIgnoreCase);
 
     public static List<CargoFlow> GetFlowPerMinuteFromName(this string name, List<string> cargoTypes)
     {

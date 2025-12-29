@@ -7,4 +7,10 @@ public record Factory(
     int MainPowerCircuitId,
     int SubPowerCircuitId,
     float X,
-    float Y);
+    float Y,
+    float Potential,
+    bool HasSloop,
+    string? RecipeClass,
+    string? Recipe,
+    FactoryFlow[] Input,
+    FactoryFlow[] Output);

@@ -81,6 +81,7 @@ The current parser assumes some things. If you need other specs, let me know in 
 
 - [Microsoft Visual Studio Community](https://www.visualstudio.com)
 - [R3dByt3 SatisfactorySaveNet](https://github.com/R3dByt3/SatisfactorySaveNet)
+- [satisfactory.wiki.gg Recipes](https://satisfactory.wiki.gg/wiki/Template:DocsRecipes.json)
 - [JakeBayer FuzzySharp](https://github.com/JakeBayer/FuzzySharp)
 - [Icons8](https://icons8.com/)
 - [NuGet](https://www.nuget.org/)
@@ -88,6 +89,7 @@ The current parser assumes some things. If you need other specs, let me know in 
 
 ## Versions & Release Notes
 
+- version 1.7: Add Shard + Sloop + Recipe to Factory
 - version 1.6: Add Resources
 - version 1.5: Add Power circuits
 - version 1.4: Factories now include factories with a unknown production percentage (FactoryPercentageProducing int -> int?)
