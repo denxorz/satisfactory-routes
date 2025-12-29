@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
+using System.Text.Json;
 using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
 
@@ -8,15 +9,10 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
 {
     private static Dictionary<string, Recipe> LoadData()
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "data.json");
-        var json = File.ReadAllText(path);
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Denxorz.Satisfactory.Routes.data.json")!;
+        var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-        var opts = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        return (JsonSerializer.Deserialize<Dictionary<string, List<Recipe>>>(json, opts) ?? [])
+        return (JsonSerializer.Deserialize<Dictionary<string, List<Recipe>>>(stream, opts) ?? [])
             .ToDictionary(r => r.Key, r => r.Value[0]);
     }
 
