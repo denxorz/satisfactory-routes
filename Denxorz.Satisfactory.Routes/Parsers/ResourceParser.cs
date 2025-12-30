@@ -15,14 +15,14 @@ public class ResourceParser(List<ComponentObject> objects, Dictionary<string, Co
             .GroupBy(m => m.Properties.GetObjectPathName("mExtractableResource"))
             .ToDictionary(m => m.Key, m => m.First());
 
-        return Resources.All
+        return [.. Resources.All
              .Select(r =>
              {
                  var miner = minersByResource.TryGetValue(r.Id, out var m) ? m : null;
 
                  float percentageProducing = 0;
-                 int minerMultiplier = 1;
-                 float overclockMultiplier = 1;
+                 int minerLevel = 1;
+                 float clockSpeed = 1;
 
                  if (miner is not null)
                  {
@@ -33,19 +33,21 @@ public class ResourceParser(List<ComponentObject> objects, Dictionary<string, Co
                                                      (miner.Properties.GetFloat("mCurrentProductivityMeasurementDuration") ?? 100);
                      }
 
-                     minerMultiplier = miner.TypePath.EndsWith("Mk3_C") ? 4 : miner.TypePath.EndsWith("Mk2_C") ? 2 : 1;
-                     overclockMultiplier = miner.Properties.GetFloat("mCurrentPotential") ?? 1;
+                     minerLevel = miner.TypePath.EndsWith("Mk3_C") ? 4 : miner.TypePath.EndsWith("Mk2_C") ? 2 : 1;
+                     clockSpeed = miner.Properties.GetFloat("mCurrentPotential") ?? 1;
                  }
 
                  return new Resource(
-                     r.Id.ToId(), 
+                     r.Id.ToId(),
                      r.Type,
-                     (float)Math.Round(60 * r.PurityModifier * minerMultiplier * percentageProducing * overclockMultiplier, 1),
-                     (int)Math.Round(60 * r.PurityModifier * 4 * 2.5, 0),
+                     miner?.ObjectReference.PathName.ToId(),
+                     r.PurityModifier,
+                     minerLevel,
+                     percentageProducing,
+                     clockSpeed,                     
                      r.X,
                      r.Y);
-             })
-             .ToList();
+             })];
     }
 }
 
