@@ -70,6 +70,7 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
 
                   var recipeFullName = o.Properties.GetObjectPathName("mCurrentRecipe");
                   recipes.TryGetValue(recipeFullName.Split('.')[^1], out var recipe);
+                  var durationMultiplier = recipe?.Duration ?? 1;
 
                   var clockSpeed = o.Properties.GetFloat("mPendingPotential") * 100 ?? DefaultClockSpeed(percentageProducing);
 
@@ -85,8 +86,8 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                       (int?)o.Properties.GetFloat("mPendingProductionBoost") == 2,
                       recipe?.ClassName,
                       recipe?.Name,
-                      [.. recipe?.Ingredients.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount)) ?? []],
-                      [.. recipe?.Products.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount)) ?? []]
+                      [.. recipe?.Ingredients.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount * durationMultiplier)) ?? []],
+                      [.. recipe?.Products.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount * durationMultiplier)) ?? []]
                   );
               });
     }
