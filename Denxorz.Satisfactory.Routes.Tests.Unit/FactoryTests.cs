@@ -68,16 +68,26 @@ public sealed class FactoryTests
         Assert.AreEqual("Recipe_SuperpositionOscillator_C", StationTests.ClassUnderTest.Factories[3004].RecipeClass);
         Assert.AreEqual("Superposition Oscillator", StationTests.ClassUnderTest.Factories[3004].Recipe);
         Assert.AreEqual("DarkMatter", StationTests.ClassUnderTest.Factories[3004].Input[0].Type);
-        Assert.AreEqual(6, StationTests.ClassUnderTest.Factories[3004].Input[0].FlowPerMinute!.Value, 0.1);
+        Assert.AreEqual(72, StationTests.ClassUnderTest.Factories[3004].Input[0].FlowPerMinute!.Value, 0.1);
         Assert.AreEqual("CrystalOscillator", StationTests.ClassUnderTest.Factories[3004].Input[1].Type);
-        Assert.AreEqual(1, StationTests.ClassUnderTest.Factories[3004].Input[1].FlowPerMinute!.Value, 0.1);
+        Assert.AreEqual(12, StationTests.ClassUnderTest.Factories[3004].Input[1].FlowPerMinute!.Value, 0.1);
         Assert.AreEqual("AluminumPlate", StationTests.ClassUnderTest.Factories[3004].Input[2].Type);
-        Assert.AreEqual(9, StationTests.ClassUnderTest.Factories[3004].Input[2].FlowPerMinute!.Value, 0.1);
+        Assert.AreEqual(108, StationTests.ClassUnderTest.Factories[3004].Input[2].FlowPerMinute!.Value, 0.1);
         Assert.AreEqual("QuantumEnergy", StationTests.ClassUnderTest.Factories[3004].Input[3].Type);
-        Assert.AreEqual(25, StationTests.ClassUnderTest.Factories[3004].Input[3].FlowPerMinute!.Value, 0.1);
+        Assert.AreEqual(300, StationTests.ClassUnderTest.Factories[3004].Input[3].FlowPerMinute!.Value, 0.1);
         Assert.AreEqual("QuantumOscillator", StationTests.ClassUnderTest.Factories[3004].Output[0].Type);
-        Assert.AreEqual(1, StationTests.ClassUnderTest.Factories[3004].Output[0].FlowPerMinute!.Value, 0.1);
+        Assert.AreEqual(12, StationTests.ClassUnderTest.Factories[3004].Output[0].FlowPerMinute!.Value, 0.1);
         Assert.AreEqual("DarkEnergy", StationTests.ClassUnderTest.Factories[3004].Output[1].Type);
-        Assert.AreEqual(25, StationTests.ClassUnderTest.Factories[3004].Output[1].FlowPerMinute!.Value, 0.1);
+        Assert.AreEqual(300, StationTests.ClassUnderTest.Factories[3004].Output[1].FlowPerMinute!.Value, 0.1);
+    }
+
+    [TestMethod]
+    public void GetsRecipeProductionMiner()
+    {
+        Assert.AreEqual("OreCopper_Miner", StationTests.ClassUnderTest.Factories[266].RecipeClass);
+        Assert.AreEqual("OreCopper", StationTests.ClassUnderTest.Factories[266].Recipe);
+        Assert.IsEmpty(StationTests.ClassUnderTest.Factories[266].Input);      
+        Assert.AreEqual("OreCopper", StationTests.ClassUnderTest.Factories[266].Output[0].Type);
+        Assert.AreEqual(120, StationTests.ClassUnderTest.Factories[266].Output[0].FlowPerMinute!.Value, 0.1);
     }
 }

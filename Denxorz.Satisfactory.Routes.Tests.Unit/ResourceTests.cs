@@ -30,7 +30,7 @@ public sealed class ResourceTests
     [TestMethod]
     public void GetsType()
     {
-        Assert.AreEqual("Bauxite", StationTests.ClassUnderTest.Resources[0].Type);
+        Assert.AreEqual("OreBauxite", StationTests.ClassUnderTest.Resources[0].Type);
     }
 
     [TestMethod]

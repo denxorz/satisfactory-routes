@@ -20,6 +20,8 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
     {
         var recipes = LoadData();
 
+        var resourcesById = Resources.All.ToDictionary(r => r.Id, r => r);
+
         var internalPowerCircuits = powerCircuits
             .OfType<PowerCircuit.InternalPowerCircuit>()
             .ToList();
@@ -72,6 +74,20 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   recipes.TryGetValue(recipeFullName.Split('.')[^1], out var recipe);
                   var durationMultiplier = recipe?.Duration ?? 1;
 
+                  FactoryFlow[] minerProduction = [];
+                  string? minerRecipe = null;
+                  string? minerRecipeClass = null;
+                  if (o.TypePath.StartsWith("/Game/FactoryGame/Buildable/Factory/Miner"))
+                  {
+                      var resource = resourcesById[o.Properties.GetObjectPathName("mExtractableResource")];
+                      var minerLevel = o.TypePath.EndsWith("Mk3_C") ? 4 : o.TypePath.EndsWith("Mk2_C") ? 2 : 1;
+
+                      var resourceProduction = 60 * resource.PurityModifier * minerLevel;
+                      minerProduction = [new FactoryFlow(resource.Type, resourceProduction)];
+                      minerRecipe = resource.Type;
+                      minerRecipeClass = $"{resource.Type}_Miner";
+                  }
+
                   var clockSpeed = o.Properties.GetFloat("mPendingPotential") * 100 ?? DefaultClockSpeed(percentageProducing);
 
                   return new Factory(
@@ -84,10 +100,10 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                       o.Position.Y,
                       clockSpeed is not null ? (float)Math.Round(clockSpeed.Value, 3) : null,
                       (int?)o.Properties.GetFloat("mPendingProductionBoost") == 2,
-                      recipe?.ClassName,
-                      recipe?.Name,
+                      recipe?.ClassName?? minerRecipeClass,
+                      recipe?.Name ?? minerRecipe,
                       [.. recipe?.Ingredients.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount * durationMultiplier)) ?? []],
-                      [.. recipe?.Products.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount * durationMultiplier)) ?? []]
+                      [.. recipe?.Products.Select(i => new FactoryFlow(i.Item.PrettyItemName(), i.Amount * durationMultiplier)) ?? minerProduction]
                   );
               });
     }
