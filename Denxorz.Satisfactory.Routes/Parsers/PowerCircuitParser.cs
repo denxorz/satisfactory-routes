@@ -81,7 +81,22 @@ public class PowerCircuitParser(List<ComponentObject> objects, Dictionary<string
                                     componentReferencesByCircuitId.TryGetValue(sc, out var components) ? [.. components] : []);
             }));
 
-        return topCircuits.Concat(subCircuits);
+        var leftOverCircuits = powerCircuits
+            .Where(c => !subCircuits.Any(s => s.Id == c.CircuitId))
+            .Select(c =>
+            {
+                circuitNames.TryGetValue(c.CircuitId, out var sw);
+                return new InternalPowerCircuit(
+                    c.CircuitId,
+                    null, 
+                    sw?.Name, 
+                    sw?.Priority, 
+                    sw?.IsSwitchedOn ?? false,
+                    componentReferencesByCircuitId.TryGetValue(c.CircuitId, out var components) ? [.. components] : []);
+            }).
+            Where(c => c.AttachedComponents.Count > 1);
+
+        return topCircuits.Concat(leftOverCircuits).Concat(subCircuits);
     }
 
     private static List<List<int>> GroupConnectedIds(List<(int A, int B)> pairs)
