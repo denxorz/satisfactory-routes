@@ -110,10 +110,11 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
                 {
                     var unloadStationId = unloadStationIdByTargetListId.TryGetValue(targetListId, out var tmp) ? tmp : "??";
                     var otherStations = stationIdsByTargetListId[targetListId].Where(s => s != t.PathName && s != unloadStationId).Select(s => s.ToId()).ToList();
+                    var vehiclesForTargetList = vehiclesByTargetListId.TryGetValue(targetListId, out var list) ? list : [];
 
                     vehicles = t.IsUnload
                     ? []
-                    : [.. vehiclesByTargetListId[targetListId]
+                    : [.. vehiclesForTargetList
                         .Select(v => new Transporter(
                             v.Vehicle.ObjectReference.PathName.ToId(),
                             "Truck",
