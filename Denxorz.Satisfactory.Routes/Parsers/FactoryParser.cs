@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using Denxorz.Satisfactory.Routes.Types;
 using SatisfactorySaveNet.Abstracts.Model;
@@ -69,6 +70,8 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                   }
 
                   var circuit = internalPowerCircuits.FirstOrDefault(pc => pc.AttachedComponents.Contains(o.ObjectReference.PathName));
+                  var circuitMainId = circuit?.ParentCircuitId ?? circuit?.Id ?? -1;
+                  var circuitSubId = circuit?.Id ?? -1;
 
                   var recipeFullName = o.Properties.GetObjectPathName("mCurrentRecipe");
                   recipes.TryGetValue(recipeFullName.Split('.')[^1], out var recipe);
@@ -94,8 +97,8 @@ public class FactoryParser(List<ComponentObject> objects, Dictionary<string, Com
                       id,
                       type,
                       percentageProducing,
-                      circuit?.ParentCircuitId ?? -1,
-                      circuit?.Id ?? -1,
+                      circuitMainId,
+                      circuitSubId,
                       o.Position.X,
                       o.Position.Y,
                       clockSpeed is not null ? (float)Math.Round(clockSpeed.Value, 3) : null,
