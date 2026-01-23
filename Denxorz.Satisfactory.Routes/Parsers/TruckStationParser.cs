@@ -93,7 +93,8 @@ public class TruckStationParser(List<ComponentObject> objects, Dictionary<string
                 Name = t.Properties.GetString("mBuildingTag") ?? "No custom name",
                 TruckStationId = t.Properties.GetObjectPathName("mStation"),
             })
-            .ToDictionary(t => t.TruckStationId, t => t);
+            .GroupBy(t => t.TruckStationId)
+            .ToDictionary(t => t.Key, t => t.First());
 
         // Truck Station, by StationId. I.e. Persistent_Level:PersistentLevel.Build_TruckStation_C_2144148257
         return [.. simpleTruckStations
